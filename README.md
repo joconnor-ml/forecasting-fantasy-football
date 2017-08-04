@@ -10,7 +10,9 @@ Built on Apache Airflow, Scikit-Learn and Pandas.
 ## Installation
 
 `git clone ...`
+
 `cd ...`
+
 `docker-compose -f docker-compose-fff.yml up -d`
 
 ## Airflow
