@@ -1,0 +1,32 @@
+version: '2'
+services:
+    postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+
+    mongo:
+        image: mongo:3.4
+        ports:
+            - "27017:27017"
+        volumes:
+            - ~/data_clone/db:/data/db'
+
+    webserver:
+        image: puckel/docker-airflow:1.8.1-1
+        restart: always
+        depends_on:
+            - postgres
+            - mongo
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+            - MONGO_URL=mongodb://mongo:27017
+        volumes:
+            - ~/forecasting-fantasy-football/dags:/usr/local/airflow/dags
+            - ~/forecasting-fantasy-football/requirements.txt:/requirements.txt
+        ports:
+            - "8080:8080"
+        command: webserver
