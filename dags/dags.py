@@ -1,11 +1,12 @@
-import logging
-from airflow.operators import PythonOperator
-from airflow.models import DAG
 from datetime import datetime, timedelta
+
+from airflow.models import DAG
+from airflow.operators import PythonOperator
+from build_models import build_models
 from download_data import download_data
 from transform_data import transform_data
 from validate_models import validate_models
-from build_models import build_models
+
 
 def make_task(func):
     return PythonOperator(
@@ -18,7 +19,7 @@ def make_task(func):
     
 args = {
     'owner': 'airflow',
-    'start_date': datetime(2017,4,28,0,0,0),
+    'start_date': datetime(2017, 8, 6, 0, 0, 0),
 }
 
 dag = DAG(
@@ -28,19 +29,13 @@ dag = DAG(
 )
 
 
-def produce_predictions(execution_date, **kwargs):
-    pass
-
-
 # define tasks
 import_task = make_task(download_data)
 transform_task = make_task(transform_data)
 model_task = make_task(build_models)
 validate_task = make_task(validate_models)
-predict_task = make_task(produce_predictions)
 
 # define dependencies
 transform_task.set_upstream(import_task)
 model_task.set_upstream(transform_task)
 validate_task.set_upstream(transform_task)
-predict_task.set_upstream(model_task)

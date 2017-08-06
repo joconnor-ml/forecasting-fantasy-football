@@ -1,19 +1,13 @@
 """Get data into nice form for training
 our models"""
 
+import logging
+from collections import defaultdict
+
+import model_utils
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression, Lasso, Ridge, LassoCV, RidgeCV
-from sklearn.preprocessing import Imputer, MinMaxScaler, PolynomialFeatures, OneHotEncoder, FunctionTransformer
-from sklearn.model_selection import cross_val_score, cross_val_predict
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-from sklearn.pipeline import make_pipeline, make_union
-from xgboost import XGBRegressor
-from sklearn_pandas import DataFrameMapper
-from collections import defaultdict
-import model_utils
-
-import logging
+from sklearn.metrics import mean_squared_error
 
 
 def validate_model(model, model_name):
@@ -38,7 +32,7 @@ def validate_model(model, model_name):
                              index=Xtrain.columns)
         if imps is not None and test_week==36:
             logging.info("\n{}".format(imps.sort_values().tail()))
-            imps.to_csv("{}_imps.csv".format(model_name))
+            imps.to_csv("/forecasting-fantasy-football/data/{}_imps.csv".format(model_name))
         pred_list.append(preds)
         ys.append(ytest)
         scores[model_name].append(mean_squared_error(ytest, preds) ** 0.5)
@@ -68,15 +62,10 @@ def validate_models(execution_date, **kwargs):
     scores = pd.concat(all_scores, axis=1)
     import matplotlib
     matplotlib.use('Agg')
-    import seaborn as sns
-    #matplotlib.pyplot.plot(scores)
-    #matplotlib.pyplot.legend(loc="best")
     scores.plot()
-    matplotlib.pyplot.savefig("scores.png")
+    matplotlib.pyplot.savefig("/forecasting-fantasy-football/data/scores.png")
     logging.info("\n{}".format(scores.mean()))
 
-    #for y, p in zip(ys, preds):
-    #    print(mean_squared_error(y, p)**0.5)
 
 if __name__ == "__main__":
     import datetime

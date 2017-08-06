@@ -1,12 +1,12 @@
 """Get data into nice form for training
 our models"""
 
-from os.path import dirname, join
+import os
 
 import numpy as np
 import pandas as pd
 import pymongo
-import os
+
 
 def transform_data(execution_date, **kwargs):
     client = pymongo.MongoClient(os.environ['MONGO_URL'])
@@ -90,7 +90,7 @@ def transform_data(execution_date, **kwargs):
                          on=["team_code", "gameweek"],
                          suffixes=("", "_team_last3"))
 
-    team_pos_data.to_csv("team_pos_data.csv")
+    team_pos_data.to_csv("/forecasting-fantasy-football/data/team_pos_data.csv")
     cumsums = team_pos_data.groupby(["team_code",
                                      "element_type"]).shift().cumsum()
     cummeans = cumsums.div(cumsums["appearances"], axis=0)
@@ -134,9 +134,11 @@ def transform_data(execution_date, **kwargs):
     last_week_teams = teams.loc[last_week_df["team_code"]]
     player_df.loc[player_df["gameweek"] == last_gameweek, "target_team"] = last_week_teams["next_opponent"].values
     player_df.loc[player_df["gameweek"] == last_gameweek, "target_home"] = last_week_teams["is_home"].values.astype(int)
-    player_df.to_csv("data.csv")
+    player_df.to_csv("/forecasting-fantasy-football/data/data.csv")
 
 
 
 if __name__ == "__main__":
-    transform_data()
+    import datetime
+
+    transform_data(datetime.datetime.now())
