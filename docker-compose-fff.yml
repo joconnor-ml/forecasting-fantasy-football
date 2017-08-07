@@ -34,3 +34,10 @@ services:
         ports:
             - "8080:8080"
         command: webserver
+
+    webapp:
+        build: ./webapp
+	ports:
+	    - "5000:5000"
+        depends_on:
+            - mongo
