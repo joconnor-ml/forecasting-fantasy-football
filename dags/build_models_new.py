@@ -19,9 +19,9 @@ def build_models(execution_date, **kwargs):
                                                                 one_hot=False)
         model = model.fit(Xtrain, ytrain)
         preds = model.predict(Xtest)
-        with open("~/forecasting-fantasy-football/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
+        with open("/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
             pickle.dump(model, f)
-        preds.to_csv("~/forecasting-fantasy-football/preds/{}_gw{}.csv".format(name, test_week))
+        preds.to_csv("/preds/{}_gw{}.csv".format(name, test_week))
 
 
 if __name__ == "__main__":

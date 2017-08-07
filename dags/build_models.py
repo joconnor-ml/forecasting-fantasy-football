@@ -20,12 +20,12 @@ def build_models(execution_date, **kwargs):
             Xtrain, Xtest, ytrain, ytest, test_names, test_week = model_utils.get_data(test_week=None,
                                                                                        one_hot=False)
             Xtest.index = test_names
-            Xtest.to_csv("~/forecasting-fantasy-football/data/test_features_gw{}.csv".format(test_week))
+            Xtest.to_csv("/data/test_features_gw{}.csv".format(test_week))
         model = model.fit(Xtrain, ytrain)
         preds = pd.DataFrame({"prediction": model.predict(Xtest)}, index=test_names)
-        with open("~/forecasting-fantasy-football/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
+        with open("/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
             pickle.dump(model, f)
-        preds.to_csv("~/forecasting-fantasy-football/preds/{}_gw{}.csv".format(name, test_week))
+        preds.to_csv("/preds/{}_gw{}.csv".format(name, test_week))
         preds["model"] = name
         collection.insert_many(preds.to_dict("records"))
 
