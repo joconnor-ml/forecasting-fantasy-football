@@ -1,1 +1,1 @@
-docker exec -ti forecastingfantasyfootball_webserver_1 airflow ${@:2}
+docker exec -ti forecastingfantasyfootball_webserver_1 airflow $@
