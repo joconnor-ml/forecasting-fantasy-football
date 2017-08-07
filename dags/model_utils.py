@@ -14,7 +14,7 @@ from bayesian_models import BayesianPointsRegressor, MeanPointsRegressor
 
 
 def get_data(test_week, one_hot):
-    df = pd.read_csv("data.csv", index_col=0)
+    df = pd.read_csv("/data/data.csv", index_col=0)
     df.index = df.web_name
     df.to_csv("test_details.csv")
     if one_hot:
