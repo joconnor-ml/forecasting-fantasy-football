@@ -3,7 +3,6 @@ Could stick them in a database? Might be a nice use of MongoDB.
 Or is this somewhere to use Kafka?"""
 from datetime import datetime
 import requests
-import json
 import time
 import logging
 import os
