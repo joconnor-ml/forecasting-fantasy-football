@@ -1,1 +1,1 @@
-docker exec -t forecastingfantasyfootball_mongo_1 bash /seed_mongo.sh
+docker exec -t forecastingfantasyfootball_mongo_1 mongorestore /dump

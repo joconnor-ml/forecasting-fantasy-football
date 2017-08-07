@@ -32,7 +32,7 @@ def validate_model(model, model_name):
                              index=Xtrain.columns)
         if imps is not None and test_week==36:
             logging.info("\n{}".format(imps.sort_values().tail()))
-            imps.to_csv("/forecasting-fantasy-football/data/{}_imps.csv".format(model_name))
+            imps.to_csv("~/forecasting-fantasy-football/data/{}_imps.csv".format(model_name))
         pred_list.append(preds)
         ys.append(ytest)
         scores[model_name].append(mean_squared_error(ytest, preds) ** 0.5)
@@ -63,7 +63,7 @@ def validate_models(execution_date, **kwargs):
     import matplotlib
     matplotlib.use('Agg')
     scores.plot()
-    matplotlib.pyplot.savefig("/forecasting-fantasy-football/data/scores.png")
+    matplotlib.pyplot.savefig("~/forecasting-fantasy-football/data/scores.png")
     logging.info("\n{}".format(scores.mean()))
 
 

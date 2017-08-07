@@ -19,13 +19,13 @@ def make_task(func):
     
 args = {
     'owner': 'airflow',
-    'start_date': datetime(2017, 8, 6, 0, 0, 0),
+    'start_date': datetime(2017, 8, 6, 10, 0, 0),
 }
 
 dag = DAG(
     dag_id='fantasy_football',
     default_args=args,
-    schedule_interval=timedelta(weeks=1),
+    schedule_interval=timedelta(days=1),
 )
 
 

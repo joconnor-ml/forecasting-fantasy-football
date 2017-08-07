@@ -13,7 +13,6 @@ services:
             - "27017:27017"
         volumes:
             - ~/data_clone/db:/data/db'
-            - ~/forecasting-fantasy-football/script/seed_mongo.sh:/seed_mongo.sh
             - ~/forecasting-fantasy-football/dump:/dump
 
     webserver:
