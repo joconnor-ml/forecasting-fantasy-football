@@ -3,6 +3,7 @@ import pickle
 import model_utils
 import pandas as pd
 from pymongo import MongoClient
+import os
 
 client = MongoClient(os.environ['MONGO_URL'])
 db = client["fantasy_football"]
