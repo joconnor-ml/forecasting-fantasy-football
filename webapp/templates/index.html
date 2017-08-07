@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>{{t}}</title>
+    <!-- href="/static/assets/style.css"-->
+</head>
+<body>
+<h1>{{ h }}</h1>
+<b><big>To-Do LIST :</big></b>
+<table>
+    <tr id="row">
+        <th class="status">Status</th>
+        <th class="name">Player Name</th>
+        <th class="pred">Prediction</th>
+    </tr>
+    {% for todo in todos %}
+    <tr class="datas">
+        <td class="name">{{ todo["name"] }}</td>
+        <td class="pred">{{ todo["prediction"] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
