@@ -37,7 +37,9 @@ services:
 
     webapp:
         build: ./webapp
-        ports:
-            - "5000:5000"
         depends_on:
             - mongo
+        ports:
+            - "5000:5000"
+        volumes:
+            - ~/forecasting-fantasy-football/webapp:/app
