@@ -1,22 +1,22 @@
 <html>
 <head>
-    <title>{{t}}</title>
+    <title>Forecasting Fantasy Football</title>
     <!-- href="/static/assets/style.css"-->
 </head>
 <body>
-<h1>{{ h }}</h1>
-<b><big>To-Do LIST :</big></b>
+<h1>Week 1 Predictions</h1>
 <table>
     <tr id="row">
-        <th class="status">Status</th>
-        <th class="name">Player Name</th>
-        <th class="pred">Prediction</th>
+        {% for title in titles %}
+        <th>{{title}}</th>
+        {% endfor %}
     </tr>
     {% for todo in todos %}
+    {% for title in titles %}
     <tr class="datas">
-        <td class="name">{{ todo["name"] }}</td>
-        <td class="pred">{{ todo["prediction"] }}</td>
+        <td>{{ todo["{{title}}"] }}</td>
     </tr>
+    {% endfor %}
     {% endfor %}
 </table>
 </body>
