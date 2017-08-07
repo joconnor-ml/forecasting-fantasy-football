@@ -1,7 +1,7 @@
 # project-specific
 models/*
 data/*
-predictions/*
+preds/*
 
 # editor stuff
 *~
