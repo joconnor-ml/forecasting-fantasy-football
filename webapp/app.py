@@ -3,7 +3,7 @@ from pymongo import MongoClient  # Database connector
 
 client = MongoClient()  # Configure the connection to the database
 db = client["fantasy_football"]  # Select the database
-preds = db["predictions"]  # Select the collection
+pred_db = db["predictions"]  # Select the collection
 
 app = Flask(__name__)
 
@@ -16,8 +16,9 @@ def hello_world():
 @app.route("/list")
 def lists():
     # Display the all Tasks
-    preds = preds.find()
-    return render_template('index.html', preds=preds)
+    preds = pred_db.find()
+    titles = preds[0].keys()
+    return render_template('index.html', preds=preds, titles=titles)
 
 
 if __name__ == '__main__':
