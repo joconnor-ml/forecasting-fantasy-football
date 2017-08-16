@@ -7,12 +7,14 @@
 <h1>Week 1 Predictions</h1>
 <table>
     <tr id="row">
+        <th>Name</th>
         <th>Global Prior</th>
         <th>Team Prior</th>
         <th>Position Prior</th>
     </tr>
     {% for pred in preds %}
     <tr class="datas">
+        <td>{{ pred["name"] }}</td>
         <td>{{ pred["bayes_global_prior"] }}</td>
         <td>{{ pred["bayes_team_prior"] }}</td>
         <td>{{ pred["bayes_position_prior"] }}</td>
