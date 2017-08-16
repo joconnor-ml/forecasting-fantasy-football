@@ -11,7 +11,6 @@ from pymongo import MongoClient
 
 PLAYER_URL = "https://fantasy.premierleague.com/drf/element-summary/"
 PLAYER_DETAIL_URL = "https://fantasy.premierleague.com/drf/bootstrap-static"
-MAX_PLAYER_ID = 650
 
 client = MongoClient(os.environ['MONGO_URL'])
 db = client["fantasy_football"]
@@ -32,10 +31,12 @@ def download_data(execution_date, **kwargs):
             row["season"] = season
             collection.update({"id": row["id"], "season": season}, row, upsert=True)
 
+    max_player_id = data["elements"][-1]["id"]
+
     logging.info("got player details")
     # now the player history data
     collection = db["player_data"]
-    for player_id in range(1, MAX_PLAYER_ID + 1):
+    for player_id in range(1, max_player_id + 1):
         if player_id % 100 == 0:
             logging.info(player_id)
         response = requests.get("{}/{}".format(PLAYER_URL, player_id))

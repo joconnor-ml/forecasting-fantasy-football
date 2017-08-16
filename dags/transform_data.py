@@ -52,6 +52,12 @@ def transform_data(execution_date, **kwargs):
         #player_df = pd.concat([player_df.drop(["target_team", "team_code", "element_type"], axis=1),
         #                           opponent_team, own_team, position], axis=1)
 
+        past_seasons = player["history_past"]
+        if past_seasons:
+            player_df["last_season_points"] = past_seasons[-1]["total_points"]
+            player_df["last_season_minutes"] = past_seasons[-1]["minutes"]
+            player_df["last_season_ppm"] = player_df["last_season_points"] / player_df["last_season_minutes"]
+
         player_dfs[i] = pd.concat([
             player_df,
             (mean3 - cumulative_means).add_suffix("_mean3"),
@@ -134,6 +140,7 @@ def transform_data(execution_date, **kwargs):
     last_week_teams = teams.loc[last_week_df["team_code"]]
     player_df.loc[player_df["gameweek"] == last_gameweek, "target_team"] = last_week_teams["next_opponent"].values
     player_df.loc[player_df["gameweek"] == last_gameweek, "target_home"] = last_week_teams["is_home"].values.astype(int)
+
     player_df.to_csv("/data/data.csv")
 
 
