@@ -136,10 +136,14 @@ def transform_data(execution_date, **kwargs):
     teams.index = teams.code
 
     last_gameweek = player_df["gameweek"].max()
-    last_week_df = player_df.loc[player_df["gameweek"] == last_gameweek]
+    last_season = player_df["season"].max()
+    last_week_df = player_df.loc[(player_df["gameweek"] == last_gameweek) &
+                                 (player_df["season"] == last_season)]
     last_week_teams = teams.loc[last_week_df["team_code"]]
-    player_df.loc[player_df["gameweek"] == last_gameweek, "target_team"] = last_week_teams["next_opponent"].values
-    player_df.loc[player_df["gameweek"] == last_gameweek, "target_home"] = last_week_teams["is_home"].values.astype(int)
+    player_df.loc[(player_df["gameweek"] == last_gameweek) &
+                  (player_df["season"] == last_season), "target_team"] = last_week_teams["next_opponent"].values
+    player_df.loc[(player_df["gameweek"] == last_gameweek) &
+                  (player_df["season"] == last_season), "target_home"] = last_week_teams["is_home"].values.astype(int)
 
     player_df.to_csv("/data/data.csv")
 
