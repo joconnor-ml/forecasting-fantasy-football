@@ -43,3 +43,5 @@ services:
             - "5000:5000"
         volumes:
             - ~/forecasting-fantasy-football/webapp:/app
+        environment:
+            - MONGO_URL=mongodb://mongo:27017

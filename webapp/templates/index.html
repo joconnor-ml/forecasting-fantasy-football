@@ -7,16 +7,16 @@
 <h1>Week 1 Predictions</h1>
 <table>
     <tr id="row">
-        {% for title in titles %}
-        <th>{{title}}</th>
-        {% endfor %}
+        <th>Global Prior</th>
+        <th>Team Prior</th>
+        <th>Position Prior</th>
     </tr>
-    {% for todo in todos %}
-    {% for title in titles %}
+    {% for pred in preds %}
     <tr class="datas">
-        <td>{{ todo["{{title}}"] }}</td>
+        <td>{{ pred["bayes_global_prior"] }}</td>
+        <td>{{ pred["bayes_team_prior"] }}</td>
+        <td>{{ pred["bayes_position_prior"] }}</td>
     </tr>
-    {% endfor %}
     {% endfor %}
 </table>
 </body>

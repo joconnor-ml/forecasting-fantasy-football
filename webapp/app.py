@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for  # For flask implementation
+import os
+from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient  # Database connector
 
-client = MongoClient()  # Configure the connection to the database
+client = MongoClient(os.environ['MONGO_URL'])
 db = client["fantasy_football"]  # Select the database
 pred_db = db["predictions"]  # Select the collection
 
