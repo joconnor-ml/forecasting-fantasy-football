@@ -16,7 +16,7 @@ def transform_data(execution_date, **kwargs):
     player_details.index = player_details.id
     player_details = player_details[["team_code", "web_name", "element_type"]]
 
-    player_history = db["player_data"].find({},{"history":1})
+    player_history = db["player_data"].find({}, {"history": 1, "history_past": 1})
     player_dfs = {}
     for i, player in enumerate(player_history):
         df = pd.DataFrame(player["history"])
