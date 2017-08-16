@@ -22,7 +22,7 @@ def transform_data(execution_date, **kwargs):
         df = pd.DataFrame(player["history"])
         df = df.reset_index()
         df.index += df["round"].min()
-        player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team"]].astype(np.float64)
+        player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
         player_df.loc[:, "appearances"] = (player_df.loc[:, "minutes"] > 0).astype(np.float64)
         mean3 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(3).mean()
         mean10 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(10).mean()
@@ -32,7 +32,7 @@ def transform_data(execution_date, **kwargs):
         cumulative_sums = player_df.cumsum(axis=0)
         # normalise by number of games played up to now
         cumulative_means = cumulative_sums[["total_points", "minutes", "bps", "appearances"]].div(cumulative_sums.loc[:, "appearances"] + 1, axis=0)
-        player_df["id"] = i + 1
+        player_df["id"] = df["element"]
         # join on player details to get position ID, name and team ID.
         player_df = pd.merge(player_df, player_details,
                              how="left", left_on="id", right_index=True)
