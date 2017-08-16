@@ -18,18 +18,22 @@ db = client["fantasy_football"]
 
 
 def download_data(execution_date, **kwargs):
-    if True: return  # hack to skip downloading for now
     response = requests.get(PLAYER_DETAIL_URL)
     data = response.json()
 
+    season = int(data["events"][0]["deadline_time"][:4])
+
+    # each key is a new collection
     for key, val in data.items():
         collection = db[key]
         if type(val) is not list:
             continue
         for row in val:
-            collection.update({"id": row["id"]}, row, upsert=True)
+            row["season"] = season
+            collection.update({"id": row["id"], "season": season}, row, upsert=True)
 
     logging.info("got player details")
+    # now the player history data
     collection = db["player_data"]
     for player_id in range(1, MAX_PLAYER_ID + 1):
         if player_id % 100 == 0:
@@ -38,7 +42,9 @@ def download_data(execution_date, **kwargs):
         data = response.json()
         data["id"] = player_id
         data["retrieval_date"] = datetime.now().isoformat()
-        collection.update({"id": data["id"]}, data, upsert=True)
+        data["season"] = season
+        collection.update({"id": data["id"], "season": season},
+                          data, upsert=True)
         time.sleep(1)
 
 
