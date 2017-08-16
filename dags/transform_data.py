@@ -70,6 +70,7 @@ def transform_data(execution_date, **kwargs):
         ], axis=1)
 
     player_df = pd.concat(player_dfs)
+    player_df.to_csv("/data/test_data.csv")
 
     team_data = player_df.groupby(["team_code",
                                    "gameweek"]).sum().reset_index()
