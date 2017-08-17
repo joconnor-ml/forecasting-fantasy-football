@@ -76,7 +76,7 @@ def add_team_features(player_df):
     cummeans["team_code"] = team_data["team_code"]
     cummeans["gameweek"] = team_data["gameweek"]
     cummeans["season"] = team_data["season"]
-    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season"
+    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
                                               "total_points"]],
                          how="left",
                          on=["team_code", "gameweek", "season"],
@@ -87,7 +87,7 @@ def add_team_features(player_df):
     cummeans["team_code"] = team_data["team_code"]
     cummeans["gameweek"] = team_data["gameweek"]
     cummeans["season"] = team_data["season"]
-    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season"
+    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
                                               "total_points"]],
                          how="left",
                          on=["team_code", "gameweek", "season"],
