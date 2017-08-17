@@ -67,28 +67,30 @@ def player_history_features(player, player_details):
 
 def add_team_features(player_df):
     team_data = player_df.groupby(["team_code",
-                                   "gameweek"]).sum().reset_index()
+                                   "gameweek", "season"]).sum().reset_index()
     team_pos_data = player_df.groupby(["team_code", "element_type",
-                                       "gameweek"]).sum().reset_index()
+                                       "gameweek", "season"]).sum().reset_index()
 
     cumsums = team_data.groupby(["team_code"]).shift().cumsum()
     cummeans = cumsums.div(cumsums["appearances"], axis=0)
     cummeans["team_code"] = team_data["team_code"]
     cummeans["gameweek"] = team_data["gameweek"]
-    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek",
+    cummeans["season"] = team_data["season"]
+    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season"
                                               "total_points"]],
                          how="left",
-                         on=["team_code", "gameweek"],
+                         on=["team_code", "gameweek", "season"],
                          suffixes=("", "_team_mean"))
 
     cumsums = sum(team_data.groupby(["team_code"]).shift(i) for i in range(1,4))
     cummeans = cumsums.div(cumsums["appearances"], axis=0)
     cummeans["team_code"] = team_data["team_code"]
     cummeans["gameweek"] = team_data["gameweek"]
-    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek",
+    cummeans["season"] = team_data["season"]
+    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season"
                                               "total_points"]],
                          how="left",
-                         on=["team_code", "gameweek"],
+                         on=["team_code", "gameweek", "season"],
                          suffixes=("", "_team_last3"))
 
     team_pos_data.to_csv("/data/team_pos_data.csv")
@@ -98,10 +100,11 @@ def add_team_features(player_df):
     cummeans["team_code"] = team_pos_data["team_code"]
     cummeans["element_type"] = team_pos_data["element_type"]
     cummeans["gameweek"] = team_pos_data["gameweek"]
+    cummeans["season"] = team_pos_data["season"]
     player_df = pd.merge(player_df, cummeans[["team_code", "element_type",
-                                              "gameweek", "total_points"]],
+                                              "gameweek", "season", "total_points"]],
                          how="left",
-                         on=["team_code", "element_type", "gameweek"],
+                         on=["team_code", "element_type", "gameweek", "season"],
                          suffixes=("", "_team_pos_mean"))
     cumsums = sum(team_pos_data.groupby(["team_code",
                                          "element_type"]).shift(i) for i in range(1, 4))
@@ -109,10 +112,11 @@ def add_team_features(player_df):
     cummeans["team_code"] = team_pos_data["team_code"]
     cummeans["element_type"] = team_pos_data["element_type"]
     cummeans["gameweek"] = team_pos_data["gameweek"]
+    cummeans["season"] = team_pos_data["season"]
     player_df = pd.merge(player_df, cummeans[["team_code", "element_type",
-                                              "gameweek", "total_points"]],
+                                              "gameweek", "season", "total_points"]],
                          how="left",
-                         on=["team_code", "element_type", "gameweek"],
+                         on=["team_code", "element_type", "gameweek", "season"],
                          suffixes=("", "_team_pos_last3"))
     return player_df
 
@@ -156,8 +160,8 @@ def transform_data(execution_date, **kwargs):
     teams.index = teams.code
 
     # find most recent gameweek
-    last_gameweek = player_df["gameweek"].max()
     last_season = player_df["season"].max()
+    last_gameweek = player_df[player_df["season"] == last_season]["gameweek"].max()
     last_week_df = player_df.loc[(player_df["gameweek"] == last_gameweek) &
                                  (player_df["season"] == last_season)]
     last_week_teams = teams.loc[last_week_df["team_code"]]
