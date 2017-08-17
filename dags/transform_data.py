@@ -13,6 +13,7 @@ def player_history_features(player, player_details):
     if "season" not in df.columns:
         df["season"] = np.nan
     df["season"] = df["season"].fillna(2016)
+    print(df["season"].max())
     df = df.reset_index()
     df.index += df["round"].min()
     player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
