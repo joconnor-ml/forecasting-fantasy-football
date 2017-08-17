@@ -10,7 +10,7 @@ import pymongo
 
 def player_history_features(player, player_details):
     df = pd.DataFrame(player["history"])
-    if "season" not in df:
+    if "season" not in df.columns:
         df["season"] = np.nan
     df["season"] = df["season"].fillna(2016)
     df = df.reset_index()
