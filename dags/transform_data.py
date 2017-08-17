@@ -132,7 +132,8 @@ def transform_data(execution_date, **kwargs):
     
     player_details = pd.DataFrame(list(db["elements"].find()))
     player_details.index = player_details.id
-    player_details = player_details[["team_code", "web_name", "element_type"]]
+    player_details["season"] = player_details["season"].fillna(2016)
+    player_details = player_details[["team_code", "web_name", "element_type", "id", "season"]]
 
     player_history = db["player_data"].find({}, {"history": 1, "history_past": 1})
     player_dfs = {}
