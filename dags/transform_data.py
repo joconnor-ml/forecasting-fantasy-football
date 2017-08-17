@@ -29,7 +29,8 @@ def player_history_features(player, player_details):
     player_df["id"] = df["element"]
     # join on player details to get position ID, name and team ID.
     player_df = pd.merge(player_df, player_details,
-                         how="left", left_on="id", right_index=True)
+                         how="left", left_on=["id", "season"],
+                         right_on=["id", "season"])
     player_df["target"] = player_df["total_points"].shift(-1)
     player_df["target_minutes"] = player_df["minutes"].shift(-1)
     player_df["target_home"] = player_df["was_home"].shift(-1)
@@ -153,6 +154,7 @@ def transform_data(execution_date, **kwargs):
     teams = pd.DataFrame(teams)
     teams.index = teams.code
 
+    # find most recent gameweek
     last_gameweek = player_df["gameweek"].max()
     last_season = player_df["season"].max()
     last_week_df = player_df.loc[(player_df["gameweek"] == last_gameweek) &
