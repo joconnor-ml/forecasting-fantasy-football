@@ -141,7 +141,7 @@ def transform_data(execution_date, **kwargs):
     player_details["season"] = player_details["season"].fillna(2016)
     player_details = player_details[["team_code", "web_name", "element_type", "id", "season"]]
 
-    player_history = db["player_data"].find({}, {"history": 1, "history_past": 1})
+    player_history = db["player_data"].find()
     player_dfs = {}
     for i, player in enumerate(player_history):
         player_dfs[i] = player_history_features(player, player_details)
