@@ -10,10 +10,11 @@ import pymongo
 
 def player_history_features(player, player_details):
     df = pd.DataFrame(player["history"])
-    if "season" not in df.columns:
-        df["season"] = np.nan
-    df["season"] = df["season"].fillna(2016)
-    print(df["season"].max())
+    try:
+        df["season"] = player["season"]
+    except KeyError:
+        df["season"] = 2016
+
     df = df.reset_index()
     df.index += df["round"].min()
     player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
