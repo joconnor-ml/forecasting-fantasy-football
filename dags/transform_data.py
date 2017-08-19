@@ -16,7 +16,6 @@ def player_history_features(player, player_details):
         df["season"] = 2016
 
     df = df.reset_index()
-    print(df.head())
     df.index += df["round"].min()
     player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
     player_df.loc[:, "appearances"] = (player_df.loc[:, "minutes"] > 0).astype(np.float64)
@@ -145,7 +144,10 @@ def transform_data(execution_date, **kwargs):
     player_history = db["player_data"].find()
     player_dfs = {}
     for i, player in enumerate(player_history):
-        player_dfs[i] = player_history_features(player, player_details)
+        try:
+            player_dfs[i] = player_history_features(player, player_details)
+        except:
+            print(i)
 
     player_df = pd.concat(player_dfs)
     player_df.to_csv("/data/test_data.csv")
