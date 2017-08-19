@@ -16,6 +16,7 @@ def player_history_features(player, player_details):
         df["season"] = 2016
 
     df = df.reset_index()
+    print(df.head())
     df.index += df["round"].min()
     player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
     player_df.loc[:, "appearances"] = (player_df.loc[:, "minutes"] > 0).astype(np.float64)
