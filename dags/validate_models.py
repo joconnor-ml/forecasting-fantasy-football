@@ -35,7 +35,7 @@ def validate_model(model, model_name):
         scores[model_name].append(mean_squared_error(ytest, preds) ** 0.5)
 
     preds = np.concatenate(pred_list)
-    scores = pd.DataFrame(scores, index=range(1, 37, 4))
+    scores = pd.DataFrame(scores, index=range(2, 37, 4))
     return ys, preds, scores
 
     
