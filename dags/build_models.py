@@ -22,14 +22,12 @@ def build_models(execution_date, **kwargs):
             Xtrain, Xtest, ytrain, ytest, test_names, test_week = model_utils.get_data(test_week=None,
                                                                                        test_season=2017,
                                                                                        one_hot=False)
-            Xtest.index = test_names
-            Xtest.to_csv("/data/test_features_gw{}.csv".format(test_week))
         model = model.fit(Xtrain, ytrain)
         preds[name] = pd.Series(model.predict(Xtest)).values
         with open("/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
             pickle.dump(model, f)
     preds = pd.DataFrame(preds)
-    preds["name"] = test_names
+    preds["name"] = list(test_names)
     preds.to_csv("/preds/gw{}.csv".format(test_week))
     collection.insert_many(preds.to_dict("records"))
 
