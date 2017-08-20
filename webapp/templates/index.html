@@ -11,7 +11,7 @@
         <th>Global Prior</th>
         <th>Team Prior</th>
         <th>Position Prior</th>
-        <th>Logistic Regression with PCA</th>
+        <th>Linear Regression</th>
         <th>XGBoost</th>
     </tr>
     {% for pred in preds %}
@@ -20,7 +20,7 @@
         <td>{{ pred["bayes_global_prior"] }}</td>
         <td>{{ pred["bayes_team_prior"] }}</td>
         <td>{{ pred["bayes_position_prior"] }}</td>
-        <td>{{ pred["polynomial_pca"] }}</td>
+        <td>{{ pred["linear"] }}</td>
         <td>{{ pred["xgb"] }}</td>
     </tr>
     {% endfor %}
