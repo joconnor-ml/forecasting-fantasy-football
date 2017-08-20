@@ -8,6 +8,9 @@
 <table>
     <tr id="row">
         <th>Name</th>
+        <th>Team</th>
+        <th>Opponent</th>
+        <th>Venue</th>
         <th>Global Prior</th>
         <th>Team Prior</th>
         <th>Position Prior</th>
@@ -16,7 +19,10 @@
     </tr>
     {% for pred in preds %}
     <tr class="datas">
-        <td>{{ pred["name"] }}</td>
+        <td>{{ pred["web_name"] }}</td>
+        <td>{{ pred["name_x"] }}</td>
+        <td>{{ pred["name_y"] }}</td>
+        <td>{{ "Home" if pred["is_home"] else "Away" }}</td>
         <td>{{ pred["bayes_global_prior"] }}</td>
         <td>{{ pred["bayes_team_prior"] }}</td>
         <td>{{ pred["bayes_position_prior"] }}</td>
