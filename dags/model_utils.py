@@ -15,6 +15,8 @@ from bayesian_models import BayesianPointsRegressor, MeanPointsRegressor
 
 def get_data(test_week, test_season, one_hot):
     df = pd.read_csv("/data/data.csv", index_col=0).reset_index()
+    if test_week is not None:
+        df = df[df["target_minutes"] > 60]
     if one_hot:
         opponent_team = pd.get_dummies(df["target_team"].fillna(999).astype(int)).add_prefix("opponent_")
         own_team = pd.get_dummies(df["team_code"].fillna(999).astype(int)).add_prefix("team_")
@@ -25,13 +27,11 @@ def get_data(test_week, test_season, one_hot):
             # own_team,
             position,
         ], axis=1)
+        X = df.drop(["target", "id", "target_minutes", "web_name", "index"], axis=1).astype(np.float64)
     else:
-        df = df.drop("team_code", axis=1)
-    if test_week is not None:
-        df = df[df["target_minutes"] > 60]
+        X = df.drop(["target", "id", "target_minutes", "web_name", "index", "team_code"], axis=1).astype(np.float64)
     y = df["target"]
 
-    X = df.drop(["target", "id", "target_minutes", "web_name", "index"], axis=1).astype(np.float64)
     if test_week is not None:
         notnull = y.notnull()
         X = X[notnull]
