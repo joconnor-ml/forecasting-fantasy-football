@@ -25,9 +25,6 @@ def player_history_features(player, player_details):
     mean5 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(5).mean()
     ewma = player_df[["total_points", "minutes", "bps", "appearances"]].ewm(halflife=10).mean()
     cumulative_sums = player_df.cumsum(axis=0)
-    if df["season"].max() == 2017:
-        print(player_df.head())
-        print(cumulative_sums.head())
     # normalise by number of games played up to now
     cumulative_means = cumulative_sums[["total_points", "minutes", "bps", "appearances"]].div(
         cumulative_sums.loc[:, "appearances"] + 1, axis=0
@@ -150,6 +147,7 @@ def transform_data(execution_date, **kwargs):
     for i, player in enumerate(player_history):
         try:
             player_dfs[i] = player_history_features(player, player_details)
+            if 700 < i < 710: print(player_dfs[i])
         except:
             print(i)
 
