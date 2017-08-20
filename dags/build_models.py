@@ -14,7 +14,7 @@ def build_models(execution_date, **kwargs):
     preds = {}
     for name, model in model_utils.models.items():
         logging.info(name)
-        if model_name == "linear":
+        if name == "linear":
             Xtrain, Xtest, ytrain, ytest, test_names, test_week = model_utils.get_data(test_week=39,
                                                                                        test_season=2017,
                                                                                        one_hot=True)
