@@ -26,8 +26,8 @@ def player_history_features(player, player_details):
     cumulative_sums = player_df.cumsum(axis=0)
     # normalise by number of games played up to now
     cumulative_means = cumulative_sums[["total_points", "minutes", "bps", "appearances"]].div(
-        cumulative_sums.loc[:, "appearances"] + 1, axis=0
-    )
+        cumulative_sums.loc[:, "appearances"], axis=0
+    ).fillna(0)
     player_df["id"] = df["element"]
     # join on player details to get position ID, name and team ID.
     player_df = pd.merge(player_df, player_details,
