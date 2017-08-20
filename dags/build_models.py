@@ -28,7 +28,7 @@ def build_models(execution_date, **kwargs):
             pickle.dump(model, f)
 
     teams = []
-    for team in db["teams"].find({"season": last_season}):
+    for team in db["teams"].find({"season": 2017}):
         team["next_opponent"] = team["next_event_fixture"][0]["opponent"]
         team["is_home"] = team["next_event_fixture"][0]["is_home"]
         teams.append(team)
