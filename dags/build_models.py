@@ -37,7 +37,7 @@ def build_models(execution_date, **kwargs):
 
     dftest = pd.merge(dftest, team_df[["name", "is_home", "next_opponent", "code"]],
                       left_on="team_code", right_on="code", how="left")
-    dftest = pd.merge(dftest, team_df[["name", "code"]],
+    dftest = pd.merge(dftest, team_df[["name", "code", "opponent_index"]],
                       left_on="next_opponent", right_on="opponent_index",
                       how="left")
 
