@@ -15,11 +15,11 @@ def build_models(execution_date, **kwargs):
     for name, model in model_utils.models.items():
         logging.info(name)
         if name == "linear":
-            Xtrain, Xtest, ytrain, ytest, dftest, test_week = model_utils.get_data(test_week=39,
+            Xtrain, Xtest, ytrain, ytest, dftest, test_week = model_utils.get_data(test_week=None,
                                                                                    test_season=2017,
                                                                                    one_hot=True)
         else:
-            Xtrain, Xtest, ytrain, ytest, dftest, test_week = model_utils.get_data(test_week=39,
+            Xtrain, Xtest, ytrain, ytest, dftest, test_week = model_utils.get_data(test_week=None,
                                                                                    test_season=2017,
                                                                                    one_hot=False)
         model = model.fit(Xtrain, ytrain)
