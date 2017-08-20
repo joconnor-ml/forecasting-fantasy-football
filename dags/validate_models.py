@@ -52,7 +52,7 @@ def validate_models(execution_date, **kwargs):
     print(sum_preds)
     print(sum_preds.shape)
     scores = pd.concat(all_scores, axis=1)
-    scores["mean_model"] = mean_squared_error(ys, sum_preds) ** 0.5
+    scores["mean_model"] = [mean_squared_error(y, p) ** 0.5 for y, p in zip(ys, sum_preds)]
     import matplotlib
     matplotlib.use('Agg')
     scores.plot()
