@@ -25,9 +25,7 @@ def build_models(execution_date, **kwargs):
             Xtest.index = test_names
             Xtest.to_csv("/data/test_features_gw{}.csv".format(test_week))
         model = model.fit(Xtrain, ytrain)
-        preds[name] = pd.Series(model.predict(Xtest).values)
-        print(name)
-        print(preds[name])
+        preds[name] = pd.Series(model.predict(Xtest)).values
         with open("/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
             pickle.dump(model, f)
     preds = pd.DataFrame(preds)
