@@ -14,8 +14,9 @@
         <th>Global Prior</th>
         <th>Team Prior</th>
         <th>Position Prior</th>
-        <th>Linear Regression</th>
+        <th>Linear Model</th>
         <th>XGBoost</th>
+        <th>Mean Model</th>
     </tr>
     {% for pred in preds %}
     <tr class="datas">
@@ -28,6 +29,7 @@
         <td>{{ pred["bayes_position_prior"] }}</td>
         <td>{{ pred["linear"] }}</td>
         <td>{{ pred["xgb"] }}</td>
+        <td>{{ pred["mean_model"] }}</td>
     </tr>
     {% endfor %}
 </table>
