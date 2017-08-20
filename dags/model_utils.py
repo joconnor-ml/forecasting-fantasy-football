@@ -21,15 +21,17 @@ def get_data(test_week, test_season, one_hot):
         position = pd.get_dummies(df["element_type"].fillna(999).astype(int)).add_prefix("position_")
         df = pd.concat([
             df.drop(["target_team", "team_code", "element_type"], axis=1),
-            opponent_team,
-            own_team,
+            # opponent_team,
+            # own_team,
             position,
         ], axis=1)
+    else:
+        df = df.drop("team_code", axis=1)
     if test_week is not None:
         df = df[df["target_minutes"] > 60]
     y = df["target"]
 
-    X = df.drop(["target", "id", "target_minutes", "web_name", "index", "team_code"], axis=1).astype(np.float64)
+    X = df.drop(["target", "id", "target_minutes", "web_name", "index"], axis=1).astype(np.float64)
     if test_week is not None:
         notnull = y.notnull()
         X = X[notnull]
