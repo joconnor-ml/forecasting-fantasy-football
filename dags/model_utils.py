@@ -82,8 +82,8 @@ models = {
     MeanPointsRegressor(),
     "bayes_global_prior":
     BayesianPointsRegressor("global"),
-    "bayes_team_prior":
-    BayesianPointsRegressor("team"),
+    # "bayes_team_prior":
+    # BayesianPointsRegressor("team"),
     "bayes_position_prior":
     BayesianPointsRegressor("position"),
 }
