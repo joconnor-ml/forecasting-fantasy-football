@@ -60,6 +60,7 @@ def validate_models(execution_date, **kwargs):
     matplotlib.use('Agg')
     scores.plot()
     matplotlib.pyplot.savefig("/data/scores.png")
+    scores.to_csv("/data/validation_scores.csv")
     logging.info("\n{}".format(scores.mean()))
 
 
