@@ -43,12 +43,13 @@ def validate_models(execution_date, **kwargs):
         logging.info(name)
         ys, preds, scores = validate_model(model, name)
         preds = np.array(preds)
-        if sum_preds is None:
-            sum_preds = preds
-        else:
-            sum_preds += preds
+        if name in ["xgb", "linear"]:
+            if sum_preds is None:
+                sum_preds = preds
+            else:
+                sum_preds += preds
         all_scores.append(scores)
-    sum_preds = sum_preds / len(model_utils.models)
+    sum_preds = sum_preds / 2
     print(sum_preds)
     print(sum_preds.shape)
     scores = pd.concat(all_scores, axis=1)
