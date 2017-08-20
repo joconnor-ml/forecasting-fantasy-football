@@ -11,7 +11,6 @@ def validate_model(model, model_name):
     ys = []
     scores = defaultdict(list)
     for test_week in range(2, 37):
-        print(test_week)
         if model_name == "linear":
             Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
                                                                             test_season=2016,
@@ -50,8 +49,6 @@ def validate_models(execution_date, **kwargs):
                 sum_preds += preds
         all_scores.append(scores)
     sum_preds = sum_preds / 2
-    print(sum_preds)
-    print(sum_preds.shape)
     scores = pd.concat(all_scores, axis=1)
     scores["mean_model"] = [mean_squared_error(y, p) ** 0.5 for y, p in zip(ys, sum_preds)]
     import matplotlib

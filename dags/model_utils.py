@@ -37,7 +37,6 @@ def get_data(test_week, test_season, one_hot):
         df = df[notnull]
         train = X["gameweek"] < test_week
         test = X["gameweek"] == test_week
-        print(train.sum(), test.sum())
         return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[test, ["web_name", "team_code", "gameweek"]]
     else:
         test = (df["season"] == 2017) & (df["target"].isnull())
