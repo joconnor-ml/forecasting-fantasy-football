@@ -165,7 +165,7 @@ def transform_data(execution_date, **kwargs):
     last_gameweek = player_df[player_df["season"] == last_season]["gameweek"].max()
 
     teams = []
-    team_list = db["teams"].find({"season": last_season})
+    team_list = list(db["teams"].find({"season": last_season}))
     for team in team_list:
         team["next_opponent"] = team_list[team["next_event_fixture"][0]["opponent"] - 1]
         team["is_home"] = team["next_event_fixture"][0]["is_home"]
