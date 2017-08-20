@@ -24,7 +24,7 @@ def build_models(execution_date, **kwargs):
                                                                         one_hot=False)
         model = model.fit(Xtrain, ytrain)
         preds[name] = pd.Series(model.predict(Xtest)).values
-        with open("/models/{}_gw{}.pkl".format(name, dftest["gameweek"].max()), "wb") as f:
+        with open("/models/{}.pkl".format(name), "wb") as f:
             pickle.dump(model, f)
 
     teams = []
@@ -42,7 +42,7 @@ def build_models(execution_date, **kwargs):
     print(preds.head())
     preds = pd.concat([preds, dftest], axis=1)
 
-    preds.to_csv("/preds/gw{}.csv".format(test_week))
+    preds.to_csv("/preds/preds.csv")
     collection.drop()
     collection.insert_many(preds.to_dict("records"))
 
