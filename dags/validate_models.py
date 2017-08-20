@@ -10,7 +10,7 @@ def validate_model(model, model_name):
     pred_list = []
     ys = []
     scores = defaultdict(list)
-    for test_week in range(12, 37, 4):
+    for test_week in range(1, 37, 4):
         if model_name == "linear":
             Xtrain, Xtest, ytrain, ytest, test_names, _ = model_utils.get_data(test_week=test_week,
                                                                                test_season=2016,

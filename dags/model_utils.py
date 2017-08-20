@@ -15,7 +15,6 @@ from bayesian_models import BayesianPointsRegressor, MeanPointsRegressor
 
 def get_data(test_week, test_season, one_hot):
     df = pd.read_csv("/data/data.csv", index_col=0).reset_index()
-    df.to_csv("/data/test_details.csv")
     if one_hot:
         opponent_team = pd.get_dummies(df["target_team"].fillna(999).astype(int)).add_prefix("opponent_")
         own_team = pd.get_dummies(df["team_code"].fillna(999).astype(int)).add_prefix("team_")

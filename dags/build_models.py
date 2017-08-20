@@ -34,9 +34,11 @@ def build_models(execution_date, **kwargs):
         teams.append(team)
     team_df = pd.DataFrame(teams)
 
-    dftest = pd.merge(dftest, team_df[["name", "is_home", "next_opponent", "code"]], left_on="team_code",
-                      right_on="code")
-    dftest = pd.merge(dftest, team_df[["name", "code"]], left_on="next_opponent", right_on="code")
+    dftest = pd.merge(dftest, team_df[["name", "is_home", "next_opponent", "code"]],
+                      left_on="team_code", right_on="code", how="left")
+    dftest = pd.merge(dftest, team_df[["name", "code"]],
+                      left_on="next_opponent", right_on="code",
+                      how="left")
 
     preds = pd.DataFrame(preds)
     print(preds.head())
