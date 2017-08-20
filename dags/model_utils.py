@@ -57,10 +57,10 @@ models = {
     make_pipeline(
         Imputer(), MinMaxScaler(), RidgeCV(),
     ),
-    "polynomial_pca":
-    make_pipeline(
-        Imputer(), PolynomialFeatures(), MinMaxScaler(), RidgeCV(),
-    ),
+    # "polynomial_pca":
+    # make_pipeline(
+    #    Imputer(), PolynomialFeatures(), MinMaxScaler(), RidgeCV(),
+    # ),
     "polynomial_fs":
     make_pipeline(
         Imputer(), PolynomialFeatures(), MinMaxScaler(), SelectKBest(f_regression, k=32),  RidgeCV(),
