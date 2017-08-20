@@ -38,12 +38,13 @@ def get_data(test_week, test_season, one_hot):
         y = y[notnull]
         df = df[notnull]
         train = (X["gameweek"] < test_week) & (X["season"] < test_season)
-        test = (X["gameweek"] == test_week) & (X["season"] < test_season)
+        test = (X["gameweek"] == test_week) & (X["season"] == test_season)
         return X[train], X[test], y[train], y[test], df.loc[test, "web_name"], test_week
     else:
-        last_week = X["gameweek"].max()
-        train = X["gameweek"] < last_week
-        test = X["gameweek"] == last_week
+        last_season = X["season"].max()
+        last_week = X.loc[X["season"] == last_season], ["gameweek"].max()
+        train = (X["gameweek"] < last_week) | (X["season"] < last_season)
+        test = (X["gameweek"] == last_week) & (X["season"] == last_season)
         X_train = X[(train) & (df["target_minutes"] > 60)]
         y_train = y[(train) & (df["target_minutes"] > 60)]
         X_test = X[test]

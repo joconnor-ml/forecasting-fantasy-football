@@ -16,9 +16,11 @@ def build_models(execution_date, **kwargs):
         logging.info(name)
         if name == "linear":
             Xtrain, Xtest, ytrain, ytest, test_names, test_week = model_utils.get_data(test_week=None,
+                                                                                       test_season=2017,
                                                                                        one_hot=True)
         else:
             Xtrain, Xtest, ytrain, ytest, test_names, test_week = model_utils.get_data(test_week=None,
+                                                                                       test_season=2017,
                                                                                        one_hot=False)
             Xtest.index = test_names
             Xtest.to_csv("/data/test_features_gw{}.csv".format(test_week))
