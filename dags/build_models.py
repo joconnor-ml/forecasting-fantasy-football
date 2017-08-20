@@ -42,6 +42,7 @@ def build_models(execution_date, **kwargs):
                       how="left")
 
     preds = pd.DataFrame(preds)
+    preds["mean_model"] = (preds["linear"] + preds["xgb"]) / 2
     print(preds.head())
     preds = pd.concat([preds.reset_index(), dftest.reset_index()], axis=1)
 
