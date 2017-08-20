@@ -19,7 +19,8 @@ def validate_model(model, model_name):
             Xtrain, Xtest, ytrain, ytest, test_names, _ = model_utils.get_data(test_week=test_week,
                                                                                test_season=2016,
                                                                                one_hot=True)
-
+        print(Xtrain)
+        print(Xtest)
         preds = model.fit((Xtrain), ytrain).predict((Xtest))
         imps = None
         if "xgb" in model_name:
