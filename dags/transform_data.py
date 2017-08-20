@@ -136,7 +136,6 @@ def transform_data(execution_date, **kwargs):
     for i, player in enumerate(player_history):
         try:
             player_dfs[i] = player_history_features(player, player_details)
-            if 700 < i < 710: print(player_dfs[i])
         except:
             print(i)
 
