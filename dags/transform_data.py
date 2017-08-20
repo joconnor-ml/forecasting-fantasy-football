@@ -16,7 +16,6 @@ def player_history_features(player, player_details):
         df["season"] = 2016
 
     df = df.reset_index()
-    df.index += df["round"].min() + (df["season"] - 2016) * 38
     player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
     player_df.loc[:, "appearances"] = (player_df.loc[:, "minutes"] > 0).astype(np.float64)
     mean3 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(3).mean()
@@ -38,17 +37,7 @@ def player_history_features(player, player_details):
     player_df["target_minutes"] = player_df["minutes"].shift(-1)
     player_df["target_home"] = player_df["was_home"].shift(-1)
     player_df["target_team"] = player_df["opponent_team"].shift(-1)
-    player_df["gameweek"] = player_df.index
-
-    # one_hot = True
-
-    # if one_hot:
-    # apply one-hot encoding to categorical variables
-    # opponent_team = pd.get_dummies(player_df["target_team"]).add_prefix("opponent_")
-    # own_team = pd.get_dummies(player_df["team_code"]).add_prefix("team_")
-    # position = pd.get_dummies(player_df["element_type"]).add_prefix("position_")
-    # player_df = pd.concat([player_df.drop(["target_team", "team_code", "element_type"], axis=1),
-    #                           opponent_team, own_team, position], axis=1)
+    player_df["gameweek"] = df["round"].min() + (df["season"] - 2016) * 38
 
     past_seasons = player["history_past"]
     if past_seasons:
