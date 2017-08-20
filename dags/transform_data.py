@@ -8,7 +8,7 @@ import pandas as pd
 import pymongo
 
 
-def player_history_features(player, player_details):
+def player_history_features(player, player_details, team_df):
     df = pd.DataFrame(player["history"])
     try:
         df["season"] = player["season"]
@@ -33,6 +33,12 @@ def player_history_features(player, player_details):
     player_df = pd.merge(player_df, player_details,
                          how="left", left_on=["id", "season"],
                          right_on=["id", "season"])
+
+    player_df["opponent_team"] = pd.merge(player_df, team_df[["season", "code", "opponent_index"]],
+                                          left_on=["opponent_team", "season"],
+                                          right_on=["opponent_index", "season"],
+                                          how="left")["code"]
+
     player_df["target"] = player_df["total_points"].shift(-1)
     player_df["target_minutes"] = player_df["minutes"].shift(-1)
     player_df["target_home"] = player_df["was_home"].shift(-1)
@@ -110,6 +116,7 @@ def add_team_features(player_df):
                          how="left",
                          on=["team_code", "element_type", "gameweek", "season"],
                          suffixes=("", "_team_pos_last3"))
+
     return player_df
 
 
@@ -131,11 +138,19 @@ def transform_data(execution_date, **kwargs):
     player_details["season"] = player_details["season"].fillna(2016)
     player_details = player_details[["team_code", "web_name", "element_type", "id", "season"]]
 
+    teams = []
+    for team in db["teams"].find():
+        team["next_opponent"] = team["next_event_fixture"][0]["opponent"]
+        team["is_home"] = team["next_event_fixture"][0]["is_home"]
+        teams.append(team)
+    team_df = pd.DataFrame(teams).reset_index()
+    team_df["opponent_index"] = team_df.index % 20 + 1
+
     player_history = db["player_data"].find()
     player_dfs = {}
     for i, player in enumerate(player_history):
         try:
-            player_dfs[i] = player_history_features(player, player_details)
+            player_dfs[i] = player_history_features(player, player_details, team_df)
         except:
             print(i)
 
@@ -150,8 +165,9 @@ def transform_data(execution_date, **kwargs):
     last_gameweek = player_df[player_df["season"] == last_season]["gameweek"].max()
 
     teams = []
-    for team in db["teams"].find({"season": last_season}):
-        team["next_opponent"] = team["next_event_fixture"][0]["opponent"]
+    team_list = db["teams"].find({"season": last_season})
+    for team in team_list:
+        team["next_opponent"] = team_list[team["next_event_fixture"][0]["opponent"] - 1]
         team["is_home"] = team["next_event_fixture"][0]["is_home"]
         teams.append(team)
     teams = pd.DataFrame(teams)

@@ -20,7 +20,7 @@ def hello_world():
 @app.route("/list")
 def lists():
     # Display the all Tasks
-    preds = pred_db.find().sort("xgb", DESCENDING)
+    preds = pred_db.find().sort("mean_model", DESCENDING)
     titles = preds[0].keys()
     return render_template('index.html', preds=preds, titles=titles)
 
