@@ -32,17 +32,18 @@ def build_models(execution_date, **kwargs):
         team["next_opponent"] = team["next_event_fixture"][0]["opponent"]
         team["is_home"] = team["next_event_fixture"][0]["is_home"]
         teams.append(team)
-    team_df = pd.DataFrame(teams)
+    team_df = pd.DataFrame(teams).reset_index()
+    team_df["opponent_index"] = team_df.index + 1
 
     dftest = pd.merge(dftest, team_df[["name", "is_home", "next_opponent", "code"]],
                       left_on="team_code", right_on="code", how="left")
     dftest = pd.merge(dftest, team_df[["name", "code"]],
-                      left_on="next_opponent", right_on="code",
+                      left_on="next_opponent", right_on="opponent_index",
                       how="left")
 
     preds = pd.DataFrame(preds)
     print(preds.head())
-    preds = pd.concat([preds, dftest], axis=1)
+    preds = pd.concat([preds.reset_index(), dftest.reset_index()], axis=1)
 
     preds.to_csv("/preds/preds.csv")
     collection.drop()
