@@ -37,7 +37,7 @@ def player_history_features(player, player_details):
     player_df["target_minutes"] = player_df["minutes"].shift(-1)
     player_df["target_home"] = player_df["was_home"].shift(-1)
     player_df["target_team"] = player_df["opponent_team"].shift(-1)
-    player_df["gameweek"] = df["round"].min() + (df["season"] - 2016) * 38
+    player_df["gameweek"] = df["round"] + (df["season"] - 2016) * 38
 
     past_seasons = player["history_past"]
     if past_seasons:
