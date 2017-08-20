@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
-from pymongo import MongoClient, ASCENDING  # Database connector
+from pymongo import MongoClient, DESCENDING  # Database connector
 
 client = MongoClient(os.environ['MONGO_URL'])
 db = client["fantasy_football"]  # Select the database
@@ -17,7 +17,7 @@ def hello_world():
 @app.route("/list")
 def lists():
     # Display the all Tasks
-    preds = pred_db.find().sort("linear", ASCENDING)
+    preds = pred_db.find().sort("linear", DESCENDING)
     titles = preds[0].keys()
     return render_template('index.html', preds=preds, titles=titles)
 
