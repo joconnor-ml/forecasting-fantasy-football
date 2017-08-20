@@ -12,13 +12,13 @@ def validate_model(model, model_name):
     scores = defaultdict(list)
     for test_week in range(1, 37, 4):
         if model_name == "linear":
-            Xtrain, Xtest, ytrain, ytest, test_names, _ = model_utils.get_data(test_week=test_week,
-                                                                               test_season=2016,
-                                                                               one_hot=True)
+            Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
+                                                                            test_season=2016,
+                                                                            one_hot=True)
         else:
-            Xtrain, Xtest, ytrain, ytest, test_names, _ = model_utils.get_data(test_week=test_week,
-                                                                               test_season=2016,
-                                                                               one_hot=True)
+            Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
+                                                                            test_season=2016,
+                                                                            one_hot=True)
         print(Xtrain)
         print(Xtest)
         preds = model.fit((Xtrain), ytrain).predict((Xtest))
