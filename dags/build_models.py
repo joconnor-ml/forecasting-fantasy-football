@@ -15,16 +15,16 @@ def build_models(execution_date, **kwargs):
     for name, model in model_utils.models.items():
         logging.info(name)
         if name == "linear":
-            Xtrain, Xtest, ytrain, ytest, dftest, test_week = model_utils.get_data(test_week=None,
-                                                                                   test_season=2017,
-                                                                                   one_hot=True)
+            Xtrain, Xtest, ytrain, ytest, dftest = model_utils.get_data(test_week=None,
+                                                                        test_season=2017,
+                                                                        one_hot=True)
         else:
-            Xtrain, Xtest, ytrain, ytest, dftest, test_week = model_utils.get_data(test_week=None,
-                                                                                   test_season=2017,
-                                                                                   one_hot=False)
+            Xtrain, Xtest, ytrain, ytest, dftest = model_utils.get_data(test_week=None,
+                                                                        test_season=2017,
+                                                                        one_hot=False)
         model = model.fit(Xtrain, ytrain)
         preds[name] = pd.Series(model.predict(Xtest)).values
-        with open("/models/{}_gw{}.pkl".format(name, test_week), "wb") as f:
+        with open("/models/{}_gw{}.pkl".format(name, dftest["gameweek"].max()), "wb") as f:
             pickle.dump(model, f)
 
     teams = []

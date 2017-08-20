@@ -38,18 +38,11 @@ def get_data(test_week, test_season, one_hot):
         df = df[notnull]
         train = (X["gameweek"] < test_week) | (X["season"] < test_season)
         test = (X["gameweek"] == test_week) & (X["season"] == test_season)
-        return X[train], X[test], y[train], y[test], df.loc[test, ["web_name", "team_code"]], test_week
+        return X[train], X[test], y[train], y[test], df.loc[test, ["web_name", "team_code", "gameweek"]]
     else:
-        last_season = X["season"].max()
-        last_week = 39  # X.loc[X["season"] == last_season, "gameweek"].max()
-        train = (X["gameweek"] < last_week) | (X["season"] < last_season)
-        test = (X["gameweek"] == last_week) & (X["season"] == last_season)
-        X_train = X[(train) & (df["target_minutes"] > 60)]
-        y_train = y[(train) & (df["target_minutes"] > 60)]
-        X_test = X[test]
-        y_test = y[test]
-        notnull = y_train.notnull()
-        return X_train[notnull], X_test, y_train[notnull], y_test, df.loc[test, ["web_name", "team_code"]], last_week
+        test = (df["season"] == 2017) & (df["target"].isnull())
+        train = y.notnull()
+        return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[test, ["web_name", "team_code", "gameweek"]]
 
 models = {
     "xgb":
