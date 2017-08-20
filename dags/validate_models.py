@@ -23,7 +23,7 @@ def validate_model(model, model_name):
         imps = None
         if "xgb" in model_name:
             imps = pd.Series(model.booster().get_fscore())
-        if imps is not None and test_week == 2:
+        if imps is not None and (test_week == 2 or test_week == 32):
             logging.info("\n{}".format(imps.sort_values().tail()))
             imps.to_csv("/data/{}_imps.csv".format(model_name))
         pred_list.append(preds)
