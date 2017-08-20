@@ -57,6 +57,18 @@ models = {
     make_pipeline(
         Imputer(), MinMaxScaler(), RidgeCV(),
     ),
+    "linear1":
+        make_pipeline(
+            Imputer(), MinMaxScaler(), Ridge(0.01),
+        ),
+    "linear2":
+        make_pipeline(
+            Imputer(), MinMaxScaler(), Ridge(1),
+        ),
+    "linear3":
+        make_pipeline(
+            Imputer(), MinMaxScaler(), Ridge(100),
+        ),
     # "polynomial_pca":
     # make_pipeline(
     #    Imputer(), PolynomialFeatures(), MinMaxScaler(), RidgeCV(),
