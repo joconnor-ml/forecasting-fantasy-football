@@ -167,7 +167,7 @@ def transform_data(execution_date, **kwargs):
     teams = []
     team_list = list(db["teams"].find({"season": last_season}))
     for team in team_list:
-        team["next_opponent"] = team_list[team["next_event_fixture"][0]["opponent"] - 1]
+        team["next_opponent"] = team_list[team["next_event_fixture"][0]["opponent"] - 1]["code"]
         team["is_home"] = team["next_event_fixture"][0]["is_home"]
         teams.append(team)
     teams = pd.DataFrame(teams)
