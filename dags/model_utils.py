@@ -26,8 +26,7 @@ def get_data(test_week, test_season, one_hot):
             position,
         ], axis=1)
     if test_week is not None:
-        pass
-        # df = df[df["target_minutes"] > 60]
+        df = df[df["target_minutes"] > 60]
     y = df["target"]
 
     X = df.drop(["target", "id", "target_minutes", "web_name"], axis=1).astype(np.float64)
@@ -38,7 +37,8 @@ def get_data(test_week, test_season, one_hot):
         df = df[notnull]
         train = X["gameweek"] < test_week
         test = X["gameweek"] == test_week
-        return X[train], X[test], y[train], y[test], df.loc[test, ["web_name", "team_code", "gameweek"]]
+        print(train.sum(), test.sum())
+        return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[test, ["web_name", "team_code", "gameweek"]]
     else:
         test = (df["season"] == 2017) & (df["target"].isnull())
         train = y.notnull()
