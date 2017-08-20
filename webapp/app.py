@@ -1,11 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient, DESCENDING  # Database connector
-
-import pandas as pd
-from bokeh.charts import Histogram
 from bokeh.embed import components
-
 from bokeh.plotting import figure, output_file, show
 
 
