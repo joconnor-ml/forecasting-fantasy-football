@@ -26,7 +26,8 @@ def get_data(test_week, test_season, one_hot):
             position,
         ], axis=1)
     if test_week is not None:
-        df = df[df["target_minutes"] > 60]
+        pass
+        # df = df[df["target_minutes"] > 60]
     y = df["target"]
 
     X = df.drop(["target", "id", "target_minutes", "web_name"], axis=1).astype(np.float64)
