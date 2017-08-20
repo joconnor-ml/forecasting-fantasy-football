@@ -13,7 +13,7 @@ from sklearn_pandas import DataFrameMapper
 from bayesian_models import BayesianPointsRegressor, MeanPointsRegressor
 
 
-def get_data(test_week, one_hot):
+def get_data(test_week, test_season, one_hot):
     df = pd.read_csv("/data/data.csv", index_col=0)
     df.index = df.web_name
     df.to_csv("test_details.csv")
@@ -37,8 +37,8 @@ def get_data(test_week, one_hot):
         X = X[notnull]
         y = y[notnull]
         df = df[notnull]
-        train = X["gameweek"] < test_week
-        test = X["gameweek"] == test_week
+        train = (X["gameweek"] < test_week) & (X["season"] < test_season)
+        test = (X["gameweek"] == test_week) & (X["season"] < test_season)
         return X[train], X[test], y[train], y[test], df.loc[test, "web_name"], test_week
     else:
         last_week = X["gameweek"].max()

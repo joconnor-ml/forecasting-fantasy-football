@@ -13,13 +13,14 @@ def validate_model(model, model_name):
     for test_week in range(12, 37, 4):
         if model_name == "linear":
             Xtrain, Xtest, ytrain, ytest, test_names, _ = model_utils.get_data(test_week=test_week,
-                                                                one_hot=True)
+                                                                               test_season=2016,
+                                                                               one_hot=True)
         else:
             Xtrain, Xtest, ytrain, ytest, test_names, _ = model_utils.get_data(test_week=test_week,
-                                                                one_hot=False)
-            
+                                                                               test_season=2016,
+                                                                               one_hot=True)
+
         preds = model.fit((Xtrain), ytrain).predict((Xtest))
-        rmse = mean_squared_error(ytest, preds) ** 0.5
         imps = None
         if "xgb" in model_name:
             imps = pd.Series(model.booster().get_fscore())
@@ -33,9 +34,7 @@ def validate_model(model, model_name):
         ys.append(ytest)
         scores[model_name].append(mean_squared_error(ytest, preds) ** 0.5)
 
-    ytest = np.concatenate(ys)
     preds = np.concatenate(pred_list)
-    rmse = mean_squared_error(ytest, preds) ** 0.5
     scores = pd.DataFrame(scores, index=range(12, 37, 4))
     return ys, preds, scores
 
