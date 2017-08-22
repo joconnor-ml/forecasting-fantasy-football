@@ -23,9 +23,10 @@ def player_history_features(player, player_details, team_df):
     std10 = player_df[["total_points"]].rolling(5).std()
     mean5 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(5).mean()
     ewma = player_df[["total_points", "minutes", "bps", "appearances"]].ewm(halflife=10).mean()
-    cumulative_sums = player_df.cumsum(axis=0)
+    sum_features = ["total_points", "minutes", "bps", "appearances"]
+    cumulative_sums = player_df[sum_features].cumsum(axis=0)
     # normalise by number of games played up to now
-    cumulative_means = cumulative_sums[["total_points", "minutes", "bps", "appearances"]].div(
+    cumulative_means = cumulative_sums[sum_features].div(
         cumulative_sums.loc[:, "appearances"], axis=0
     ).fillna(0)
     player_df["id"] = df["element"]

@@ -22,10 +22,16 @@ def validate_model(model, model_name):
         preds = model.fit((Xtrain), ytrain).predict((Xtest))
         imps = None
         if "xgb" in model_name:
-            imps = pd.Series(model.booster().get_fscore())
-        if imps is not None and (test_week == 2 or test_week == 39):
-            logging.info("\n{}".format(imps.sort_values().tail()))
-            imps.to_csv("/data/{}_imps.csv".format(model_name))
+            imps = pd.Series(model.booster().get_fscore()).sort_values(ascending=False)
+        if "linear" in model_name:
+            try:
+                imps = pd.Series(model.steps[-1][-1].coef_, index=Xtrain.columns).sort_values(ascending=False)
+            except Exception as e:
+                logging.warning("Saving importances failed:")
+                logging.warning(e)
+        if imps is not None and (test_week == 37 or test_week == 39):
+            logging.info("\n{}".format(imps.head()))
+            imps.to_csv("/data/{}_imps_{}.csv".format(model_name, test_week))
         pred_list.append(preds)
         ys.append(ytest)
         scores[model_name].append(mean_squared_error(ytest, preds) ** 0.5)

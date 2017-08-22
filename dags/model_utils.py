@@ -27,9 +27,13 @@ def get_data(test_week, test_season, one_hot):
             # own_team,
             position,
         ], axis=1)
-        X = df.drop(["target", "id", "target_minutes", "web_name", "index"], axis=1).astype(np.float64)
+        X = df.drop(["target", "id", "target_minutes",
+                     "web_name", "index", "season",
+                     "gameweek"], axis=1).astype(np.float64)
     else:
-        X = df.drop(["target", "id", "target_minutes", "web_name", "index", "team_code"], axis=1).astype(np.float64)
+        X = df.drop(["target", "id", "target_minutes",
+                     "web_name", "index", "team_code",
+                     "season", "gameweek"], axis=1).astype(np.float64)
     y = df["target"]
 
     if test_week is not None:
@@ -37,8 +41,8 @@ def get_data(test_week, test_season, one_hot):
         X = X[notnull]
         y = y[notnull]
         df = df[notnull]
-        train = X["gameweek"] < test_week
-        test = X["gameweek"] == test_week
+        train = df["gameweek"] < test_week
+        test = df["gameweek"] == test_week
         return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[test, ["web_name", "team_code", "gameweek"]]
     else:
         test = (df["season"] == 2017) & (df["target"].isnull())
