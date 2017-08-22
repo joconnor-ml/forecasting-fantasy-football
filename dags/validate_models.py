@@ -10,7 +10,7 @@ def validate_model(model, model_name):
     pred_list = []
     ys = []
     scores = defaultdict(list)
-    for test_week in range(2, 37):
+    for test_week in list(range(2, 37)) + [39]:
         if model_name == "linear":
             Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
                                                                             test_season=2016,
@@ -23,7 +23,7 @@ def validate_model(model, model_name):
         imps = None
         if "xgb" in model_name:
             imps = pd.Series(model.booster().get_fscore())
-        if imps is not None and (test_week == 2 or test_week == 32):
+        if imps is not None and (test_week == 2 or test_week == 39):
             logging.info("\n{}".format(imps.sort_values().tail()))
             imps.to_csv("/data/{}_imps.csv".format(model_name))
         pred_list.append(preds)
@@ -31,7 +31,7 @@ def validate_model(model, model_name):
         scores[model_name].append(mean_squared_error(ytest, preds) ** 0.5)
 
     preds = np.array(pred_list)
-    scores = pd.DataFrame(scores, index=range(2, 37))
+    scores = pd.DataFrame(scores, index=list(range(2, 37)) + [39])
     return ys, preds, scores
 
     
