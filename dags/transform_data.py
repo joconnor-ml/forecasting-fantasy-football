@@ -29,6 +29,8 @@ def player_history_features(player, player_details, team_df):
     cumulative_means = cumulative_sums[sum_features].div(
         cumulative_sums.loc[:, "appearances"], axis=0
     ).fillna(0)
+
+    player_df["appearances_sum_all"] = cumulative_sums["appearances"]
     player_df["id"] = df["element"]
     # join on player details to get position ID, name and team ID.
     player_df = pd.merge(player_df, player_details,
@@ -60,7 +62,7 @@ def player_history_features(player, player_details, team_df):
         std10.add_suffix("_std10"),
         (ewma - cumulative_means).add_suffix("_ewma"),
         cumulative_means.add_suffix("_mean_all"),
-        cumulative_sums.add_suffix("_sum_all"),
+        # cumulative_sums.add_suffix("_sum_all"),
     ], axis=1)
 
 
