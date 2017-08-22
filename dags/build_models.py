@@ -40,7 +40,10 @@ def build_models(execution_date, **kwargs):
     dftest = pd.merge(dftest, team_df[["name", "code", "opponent_index"]],
                       left_on="next_opponent", right_on="opponent_index",
                       how="left")
-
+    dftest["position"] = dftest["element_type"].map({1: "GK",
+                                                     2: "DF",
+                                                     3: "MF",
+                                                     4: "FW"})
     preds = pd.DataFrame(preds)
     preds["mean_model"] = (preds["linear"] + preds["xgb"]) / 2
     print(preds.head())

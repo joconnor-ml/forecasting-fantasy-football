@@ -34,7 +34,7 @@ def get_data(test_week, test_season, one_hot):
         X = df.drop(["target", "id", "target_minutes",
                      "web_name", "index", "team_code",
                      "season", "gameweek"], axis=1).astype(np.float64)
-    X = X.dropna("all", axis=1)
+    X = X.dropna(how="all", axis=1)
     X = X.loc[:, (X != X.ix[0]).any()]
     y = df["target"]
 

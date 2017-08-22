@@ -30,8 +30,11 @@ def performance():
     # Create the plot
     p = figure(plot_width=800, plot_height=400)
 
+    preds = pred_db.find()
+    mean_preds = [p["mean_model"] for p in preds]
+
     # add a line renderer
-    p.line([1, 2, 3, 4, 5], [6, 7, 2, 4, 5], line_width=2)
+    p.line(list(range(len(mean_preds))), mean_preds, line_width=2)
 
     # Set the x axis label
     p.xaxis.axis_label = "Week"
