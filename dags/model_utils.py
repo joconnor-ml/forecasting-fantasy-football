@@ -1,15 +1,11 @@
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression, Lasso, Ridge, LassoCV, RidgeCV
+from sklearn.linear_model import Ridge, RidgeCV
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import Imputer, MinMaxScaler, PolynomialFeatures, OneHotEncoder, FunctionTransformer
-from sklearn.model_selection import cross_val_score, cross_val_predict
-from sklearn.metrics import mean_squared_error
-from sklearn.pipeline import make_pipeline, make_union
-from sklearn.decomposition import PCA
+from sklearn.pipeline import make_pipeline
 from sklearn.feature_selection import SelectKBest, f_regression
 from xgboost import XGBRegressor
-from sklearn_pandas import DataFrameMapper
 from bayesian_models import BayesianPointsRegressor, MeanPointsRegressor
 
 
@@ -18,18 +14,18 @@ def get_data(test_week, test_season, one_hot):
     if test_week is not None:
         df = df[df["target_minutes"] > 60]
     if one_hot:
-        opponent_team = pd.get_dummies(df["target_team"].fillna(999).astype(int)).add_prefix("opponent_")
-        own_team = pd.get_dummies(df["team_code"].fillna(999).astype(int)).add_prefix("team_")
+        # opponent_team = pd.get_dummies(df["target_team"].fillna(999).astype(int)).add_prefix("opponent_")
+        # own_team = pd.get_dummies(df["team_code"].fillna(999).astype(int)).add_prefix("team_")
         position = pd.get_dummies(df["element_type"].fillna(999).astype(int)).add_prefix("position_")
         df = pd.concat([
-            df.drop(["target_team", "team_code", "element_type"], axis=1),
+            df,
             # opponent_team,
             # own_team,
             position,
         ], axis=1)
         X = df.drop(["target", "id", "target_minutes",
                      "web_name", "index", "season",
-                     "gameweek"], axis=1).astype(np.float64)
+                     "gameweek", "target_team", "team_code", "element_type"], axis=1).astype(np.float64)
     else:
         X = df.drop(["target", "id", "target_minutes",
                      "web_name", "index", "team_code",
@@ -64,17 +60,21 @@ models = {
     make_pipeline(
         Imputer(), MinMaxScaler(), RidgeCV(),
     ),
-    "linear1":
+    "constant":
         make_pipeline(
-            Imputer(), MinMaxScaler(), Ridge(0.01),
+            Imputer(), MinMaxScaler(), Ridge(1e-9),
         ),
-    "linear2":
+    "linear1":
         make_pipeline(
             Imputer(), MinMaxScaler(), Ridge(1),
         ),
-    "linear3":
+    "linear2":
         make_pipeline(
             Imputer(), MinMaxScaler(), Ridge(100),
+        ),
+    "linear3":
+        make_pipeline(
+            Imputer(), MinMaxScaler(), Ridge(1000),
         ),
     # "polynomial_pca":
     # make_pipeline(
