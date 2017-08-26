@@ -8,6 +8,8 @@
 <table>
     <tr id="row">
         <th>Name</th>
+        <th>Position</th>
+        <th>Value</th>
         <th>Team</th>
         <th>Opponent</th>
         <th>Venue</th>
@@ -18,6 +20,8 @@
     {% for pred in preds %}
     <tr class="datas">
         <td>{{ pred["web_name"] }}</td>
+        <td>{{ pred["position"] }}</td>
+        <td>{{ pred["value"] / 10 }}</td>
         <td>{{ pred["name_x"] }}</td>
         <td>{{ pred["name_y"] }}</td>
         <td>{{ "Home" if pred["is_home"] else "Away" }}</td>

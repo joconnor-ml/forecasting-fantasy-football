@@ -16,7 +16,7 @@ def player_history_features(player, player_details, team_df):
         df["season"] = 2016
 
     df = df.reset_index()
-    player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season"]].astype(np.float64)
+    player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season", "value"]].astype(np.float64)
     player_df.loc[:, "appearances"] = (player_df.loc[:, "minutes"] > 0).astype(np.float64)
     mean3 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(3).mean()
     mean10 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(10).mean()

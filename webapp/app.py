@@ -20,7 +20,7 @@ def hello_world():
 @app.route("/list")
 def lists():
     # Display the all Tasks
-    preds = pred_db.find().sort("mean_model", DESCENDING)
+    preds = list(pred_db.find().sort("mean_model", DESCENDING))[:-200]
     titles = preds[0].keys()
     return render_template('index.html', preds=preds, titles=titles)
 
@@ -31,7 +31,7 @@ def performance():
     p = figure(plot_width=800, plot_height=400)
 
     preds = pred_db.find()
-    mean_preds = [p["mean_model"] for p in preds]
+    mean_preds = [pred["mean_model"] for pred in preds]
 
     # add a line renderer
     p.line(list(range(len(mean_preds))), mean_preds, line_width=2)
