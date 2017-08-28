@@ -4,6 +4,12 @@ import model_utils
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
+from pymongo import MongoClient  # Database connector
+import os
+
+client = MongoClient(os.environ['MONGO_URL'])
+db = client["fantasy_football"]  # Select the database
+score_db = db["scores"]  # Select the collection
 
 
 def validate_model(model, model_name):
@@ -90,6 +96,8 @@ def validate_models(execution_date, **kwargs):
     scores = pd.concat(all_scores, axis=1)
     scores["mean_model"] = [mean_squared_error(y, p) ** 0.5 for y, p in zip(ys, sum_preds)]
     scores.to_csv("/data/validation_scores.csv")
+    score_db.drop()
+    score_db.insert_many(scores.reset_index().to_dict("records"))
     logging.info("\n{}".format(scores.mean()))
 
     for name, model in model_utils.models.items():

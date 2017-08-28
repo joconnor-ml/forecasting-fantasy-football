@@ -8,6 +8,7 @@ from bokeh.plotting import figure, output_file, show
 client = MongoClient(os.environ['MONGO_URL'])
 db = client["fantasy_football"]  # Select the database
 pred_db = db["predictions"]  # Select the collection
+score_db = db["scores"]  # Select the collection
 
 app = Flask(__name__)
 
@@ -30,8 +31,8 @@ def performance():
     # Create the plot
     p = figure(plot_width=800, plot_height=400)
 
-    preds = pred_db.find()
-    mean_preds = [pred["mean_model"] for pred in preds]
+    scores = score_db.find()
+    mean_preds = [score["mean_model"] for score in scores]
 
     # add a line renderer
     p.line(list(range(len(mean_preds))), mean_preds, line_width=2)
