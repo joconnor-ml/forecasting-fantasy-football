@@ -18,13 +18,13 @@ def validate_model(model, model_name):
     scores = defaultdict(list)
     for test_week in list(range(2, 37)) + [39]:
         if model_name == "linear":
-            Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
-                                                                            test_season=2016,
-                                                                            one_hot=True)
+            Xtrain, Xtest, ytrain, ytest, df_train, df_test = model_utils.get_data(test_week=test_week,
+                                                                                   test_season=2016,
+                                                                                   one_hot=True)
         else:
-            Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
-                                                                            test_season=2016,
-                                                                            one_hot=False)
+            Xtrain, Xtest, ytrain, ytest, df_train, df_test = model_utils.get_data(test_week=test_week,
+                                                                                   test_season=2016,
+                                                                                   one_hot=False)
         preds = model.fit(Xtrain, ytrain).predict((Xtest))
         imps = None
         if "xgb" in model_name:
@@ -54,16 +54,16 @@ def validate_model_season2(model, model_name):
     test_week = 39
     train_week = 1
     if model_name == "linear":
-        Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
-                                                                        test_season=2016,
-                                                                        one_hot=True)
+        Xtrain, Xtest, ytrain, ytest, df_train, df_test = model_utils.get_data(test_week=test_week,
+                                                                               test_season=2016,
+                                                                               one_hot=True)
     else:
-        Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
-                                                                        test_season=2016,
-                                                                        one_hot=False)
+        Xtrain, Xtest, ytrain, ytest, df_train, df_test = model_utils.get_data(test_week=test_week,
+                                                                               test_season=2016,
+                                                                               one_hot=False)
 
-    preds = model.fit(Xtrain.loc[Xtrain.gameweek == train_week],
-                      ytrain.loc[Xtrain.gameweek == train_week]).predict(Xtest)
+    preds = model.fit(Xtrain.loc[df_train.gameweek == train_week],
+                      ytrain.loc[df_train.gameweek == train_week]).predict(Xtest)
     imps = None
     if "xgb" in model_name:
         imps = pd.Series(model.booster().get_fscore()).sort_values(ascending=False)

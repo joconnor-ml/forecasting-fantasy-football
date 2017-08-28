@@ -47,11 +47,13 @@ def get_data(test_week, test_season, one_hot):
         df = df[notnull]
         train = df["gameweek"] < test_week
         test = df["gameweek"] == test_week
-        return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[test, info_features]
+        return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[train, info_features], df.loc[
+            test, info_features]
     else:
         test = (df["season"] == 2017) & (df["target"].isnull())
         train = y.notnull()
-        return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[test, info_features]
+        return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[train, info_features], df.loc[
+            test, info_features]
 
 models = {
     "xgb":
