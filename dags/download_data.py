@@ -29,7 +29,8 @@ def download_data(execution_date, **kwargs):
             continue
         for row in val:
             row["season"] = season
-            collection.update({"id": row["id"], "season": season}, row, upsert=True)
+            if "id" in row:
+                collection.update({"id": row["id"], "season": season}, row, upsert=True)
 
     max_player_id = data["elements"][-1]["id"]
 

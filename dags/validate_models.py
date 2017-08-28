@@ -19,8 +19,7 @@ def validate_model(model, model_name):
             Xtrain, Xtest, ytrain, ytest, test_names = model_utils.get_data(test_week=test_week,
                                                                             test_season=2016,
                                                                             one_hot=False)
-
-        preds = model.fit((Xtrain), ytrain).predict((Xtest))
+        preds = model.fit(Xtrain, ytrain).predict((Xtest))
         imps = None
         if "xgb" in model_name:
             imps = pd.Series(model.booster().get_fscore()).sort_values(ascending=False)
