@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from pymongo import MongoClient, DESCENDING  # Database connector
 from bokeh.embed import components
 from bokeh.plotting import figure, output_file, show
@@ -18,13 +18,38 @@ def hello_world():
     return 'Hello, Joe.'
 
 
-@app.route("/list")
-def lists():
-    # Display the all Tasks
-    preds = list(pred_db.find().sort("mean_model", DESCENDING))[:-200]
+@app.route("/top/<int:n>")
+def top(n):
+    # Display top n players
+    preds = list(pred_db.aggregate([
+        {"$sort": {"mean_model": 1}},
+        {"$limit": n}
+    ]))
     titles = preds[0].keys()
     return render_template('index.html', preds=preds, titles=titles)
 
+
+@app.route('/position/<position>')
+def position(position):
+    position = position.upper()
+    if position not in ["GK", "DF", "MF", "FW"]:
+        return abort(404)
+    preds = list(pred_db.find({"position": position}).sort("mean_model",
+                                                           DESCENDING))
+    titles = preds[0].keys()
+    return render_template('index.html', preds=preds, titles=titles)
+
+
+@app.route('/club/<club>')
+def club(club):
+    club = club.title()
+    try:
+        preds = list(pred_db.find({"name_x": club}).sort("mean_model",
+                                                         DESCENDING))
+        titles = preds[0].keys()
+        return render_template('index.html', preds=preds, titles=titles)
+    except:
+        return abort(404)
 
 @app.route("/performance")
 def performance():

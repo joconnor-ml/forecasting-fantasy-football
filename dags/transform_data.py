@@ -8,7 +8,7 @@ import pandas as pd
 import pymongo
 
 
-def player_history_features(player, player_details, team_df):
+def player_history_features(player, player_details, team_df, target_shift=1):
     df = pd.DataFrame(player["history"])
     try:
         df["season"] = player["season"]
@@ -16,14 +16,20 @@ def player_history_features(player, player_details, team_df):
         df["season"] = 2016
 
     df = df.reset_index()
-    player_df = df[["minutes", "bps", "total_points", "was_home", "opponent_team", "season", "value"]].astype(np.float64)
+    player_df = df[["minutes", "bps", "total_points",
+                    "was_home", "opponent_team", "season", "value",
+                    "big_chances_created", "big_chances_missed",
+                    "goals_scored", "goals_conceded"]].astype(np.float64)
     player_df.loc[:, "appearances"] = (player_df.loc[:, "minutes"] > 0).astype(np.float64)
-    mean3 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(3).mean()
-    mean10 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(10).mean()
-    std10 = player_df[["total_points"]].rolling(5).std()
-    mean5 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(5).mean()
-    ewma = player_df[["total_points", "minutes", "bps", "appearances"]].ewm(halflife=10).mean()
-    sum_features = ["total_points", "minutes", "bps", "appearances"]
+    # mean3 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(3).mean()
+    # mean10 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(10).mean()
+    # std10 = player_df[["total_points"]].rolling(5).std()
+    # mean5 = player_df[["total_points", "minutes", "bps", "appearances"]].rolling(5).mean()
+    # ewma = player_df[["total_points", "minutes", "bps", "appearances"]].ewm(halflife=10).mean()
+    sum_features = ["total_points", "minutes", "bps", "appearances",
+                    "big_chances_created", "big_chances_missed",
+                    "goals_scored", "goals_conceded"
+                    ]
     cumulative_sums = player_df[sum_features].cumsum(axis=0)
     # normalise by number of games played up to now
     cumulative_means = cumulative_sums[sum_features].div(
@@ -42,10 +48,10 @@ def player_history_features(player, player_details, team_df):
                                           right_on=["opponent_index", "season"],
                                           how="left")["code"]
 
-    player_df["target"] = player_df["total_points"].shift(-1)
-    player_df["target_minutes"] = player_df["minutes"].shift(-1)
-    player_df["target_home"] = player_df["was_home"].shift(-1)
-    player_df["target_team"] = player_df["opponent_team"].shift(-1)
+    player_df["target"] = player_df["total_points"].shift(-target_shift)
+    player_df["target_minutes"] = player_df["minutes"].shift(-target_shift)
+    player_df["target_home"] = player_df["was_home"].shift(-target_shift)
+    player_df["target_team"] = player_df["opponent_team"].shift(-target_shift)
     player_df["gameweek"] = df["round"] + (df["season"] - 2016) * 38
 
     past_seasons = player["history_past"]
@@ -56,11 +62,11 @@ def player_history_features(player, player_details, team_df):
 
     return pd.concat([
         player_df,
-        (mean3 - cumulative_means).add_suffix("_mean3"),
-        (mean5 - cumulative_means).add_suffix("_mean5"),
-        (mean10 - cumulative_means).add_suffix("_mean10"),
-        std10.add_suffix("_std10"),
-        (ewma - cumulative_means).add_suffix("_ewma"),
+        # (mean3 - cumulative_means).add_suffix("_mean3"),
+        # (mean5 - cumulative_means).add_suffix("_mean5"),
+        # (mean10 - cumulative_means).add_suffix("_mean10"),
+        # std10.add_suffix("_std10"),
+        #(ewma - cumulative_means).add_suffix("_ewma"),
         cumulative_means.add_suffix("_mean_all"),
         # cumulative_sums.add_suffix("_sum_all"),
     ], axis=1)
@@ -78,10 +84,17 @@ def add_team_features(player_df):
     cummeans["gameweek"] = team_data["gameweek"]
     cummeans["season"] = team_data["season"]
     player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
-                                              "total_points"]],
+                                              "total_points", "goals_scored", "goals_conceded", "bps"]],
                          how="left",
                          on=["team_code", "gameweek", "season"],
                          suffixes=("", "_team_mean"))
+
+    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
+                                              "total_points", "goals_scored", "goals_conceded", "bps"]],
+                         how="left",
+                         left_on=["target_team", "gameweek", "season"],
+                         right_on=["team_code", "gameweek", "season"],
+                         suffixes=("", "_target_team_mean")).drop("team_code_target_team_mean", axis=1)
 
     cumsums = sum(team_data.groupby(["team_code"]).shift(i) for i in range(1,4))
     cummeans = cumsums.div(cumsums["appearances"], axis=0)
@@ -89,10 +102,17 @@ def add_team_features(player_df):
     cummeans["gameweek"] = team_data["gameweek"]
     cummeans["season"] = team_data["season"]
     player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
-                                              "total_points"]],
+                                              "total_points", "goals_scored", "goals_conceded", "bps"]],
                          how="left",
                          on=["team_code", "gameweek", "season"],
                          suffixes=("", "_team_last3"))
+
+    player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
+                                              "total_points", "goals_scored", "goals_conceded", "bps"]],
+                         how="left",
+                         left_on=["target_team", "gameweek", "season"],
+                         right_on=["team_code", "gameweek", "season"],
+                         suffixes=("", "_target_team_last3")).drop("team_code_target_team_last3", axis=1)
 
     team_pos_data.to_csv("/data/team_pos_data.csv")
     cumsums = team_pos_data.groupby(["team_code",
@@ -103,10 +123,18 @@ def add_team_features(player_df):
     cummeans["gameweek"] = team_pos_data["gameweek"]
     cummeans["season"] = team_pos_data["season"]
     player_df = pd.merge(player_df, cummeans[["team_code", "element_type",
-                                              "gameweek", "season", "total_points"]],
+                                              "gameweek", "season", "total_points",
+                                              "goals_scored", "goals_conceded", "bps"]],
                          how="left",
                          on=["team_code", "element_type", "gameweek", "season"],
                          suffixes=("", "_team_pos_mean"))
+    # player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
+    #                                          "total_points", "goals_scored", "goals_conceded", "bps"]],
+    #                     how="left",
+    #                     left_on=["target_team", "gameweek", "season"],
+    #                     right_on=["team_code", "gameweek", "season"],
+    #                     suffixes=("", "_target_team_pos_mean")).drop("team_code_target_team_pos_mean", axis=1)
+
     cumsums = sum(team_pos_data.groupby(["team_code",
                                          "element_type"]).shift(i) for i in range(1, 4))
     cummeans = cumsums.div(cumsums["appearances"], axis=0)
@@ -115,10 +143,17 @@ def add_team_features(player_df):
     cummeans["gameweek"] = team_pos_data["gameweek"]
     cummeans["season"] = team_pos_data["season"]
     player_df = pd.merge(player_df, cummeans[["team_code", "element_type",
-                                              "gameweek", "season", "total_points"]],
+                                              "gameweek", "season", "total_points",
+                                              "goals_scored", "goals_conceded", "bps"]],
                          how="left",
                          on=["team_code", "element_type", "gameweek", "season"],
                          suffixes=("", "_team_pos_last3"))
+    # player_df = pd.merge(player_df, cummeans[["team_code", "gameweek", "season",
+    #                                          "total_points", "goals_scored", "goals_conceded", "bps"]],
+    #                     how="left",
+    #                     left_on=["target_team", "gameweek", "season"],
+    #                     right_on=["team_code", "gameweek", "season"],
+    #                     suffixes=("", "_target_team_pos_last3")).drop("team_code_target_team_pos_last3", axis=1)
 
     return player_df
 
@@ -138,7 +173,10 @@ def transform_data(execution_date, **kwargs):
     
     player_details = pd.DataFrame(list(db["elements"].find()))
     player_details.index = player_details.id
-    player_details["season"] = player_details["season"].fillna(2016)
+    try:
+        player_details["season"] = player_details["season"].fillna(2016)
+    except KeyError:
+        player_details["season"] = 2016
     player_details = player_details[["team_code", "web_name", "element_type", "id", "season"]]
 
     teams = []
@@ -148,20 +186,21 @@ def transform_data(execution_date, **kwargs):
         teams.append(team)
     team_df = pd.DataFrame(teams).reset_index()
     team_df["opponent_index"] = team_df.index % 20 + 1
+    try:
+        team_df["season"] = team_df["season"].fillna(2016)
+    except KeyError:
+        team_df["season"] = 2016
 
     player_history = db["player_data"].find()
     player_dfs = {}
     for i, player in enumerate(player_history):
         try:
-            player_dfs[i] = player_history_features(player, player_details, team_df)
-        except:
-            print(i)
+            player_dfs[i] = player_history_features(player, player_details, team_df, target_shift=1)
+        except Exception as e:
+            print(i, e)
 
     player_df = pd.concat(player_dfs)
     player_df.to_csv("/data/test_data.csv")
-
-    player_df = add_team_features(player_df)
-    player_df = add_bayes_features(player_df)
 
     # find most recent gameweek
     last_season = player_df["season"].max()
@@ -174,7 +213,8 @@ def transform_data(execution_date, **kwargs):
         team["is_home"] = team["next_event_fixture"][0]["is_home"]
         teams.append(team)
     teams = pd.DataFrame(teams)
-    teams.index = teams.code
+    print(teams.head())
+    teams.index = teams["code"]
 
     last_week_df = player_df.loc[(player_df["gameweek"] == last_gameweek) &
                                  (player_df["season"] == last_season)]
@@ -185,8 +225,79 @@ def transform_data(execution_date, **kwargs):
     player_df.loc[(player_df["gameweek"] == last_gameweek) &
                   (player_df["season"] == last_season), "target_home"] = last_week_teams["is_home"].values.astype(int)
 
+    player_df = add_team_features(player_df)
+    player_df = add_bayes_features(player_df)
+
     player_df.to_csv("/data/data.csv")
 
+
+def transform_data2(execution_date, **kwargs):
+    client = pymongo.MongoClient(os.environ['MONGO_URL'])
+    db = client["fantasy_football"]
+
+    player_details = pd.DataFrame(list(db["elements"].find()))
+    player_details.index = player_details.id
+    try:
+        player_details["season"] = player_details["season"].fillna(2016)
+    except KeyError:
+        player_details["season"] = 2016
+    player_details = player_details[["team_code", "web_name", "element_type", "id", "season"]]
+
+    teams = []
+    for team in db["teams"].find():
+        team["next_opponent"] = team["next_event_fixture"][0]["opponent"]
+        team["is_home"] = team["next_event_fixture"][0]["is_home"]
+        teams.append(team)
+    team_df = pd.DataFrame(teams).reset_index()
+    team_df["opponent_index"] = team_df.index % 20 + 1
+    try:
+        team_df["season"] = team_df["season"].fillna(2016)
+    except KeyError:
+        team_df["season"] = 2016
+
+    player_history = db["player_data"].find()
+    player_dfs = {}
+    for i, player in enumerate(player_history):
+        try:
+            player_dfs[i] = player_history_features(player, player_details, team_df, target_shift=2)
+        except:
+            print(i)
+
+    player_df = pd.concat(player_dfs)
+    player_df.to_csv("/data/test_data.csv")
+
+    # find most recent gameweek
+    last_season = player_df["season"].max()
+    last_gameweek = player_df[player_df["season"] == last_season]["gameweek"].max()
+
+    teams = []
+    team_list = list(db["teams"].find({"season": last_season}))
+    for team in team_list:
+        try:
+            team["next_opponent"] = team_list[team["next_event_fixture"][0]["opponent"] - 1]["code"]
+            team["is_home"] = team["next_event_fixture"][0]["is_home"]
+        except:
+            team["next_opponent"] = np.nan
+            team["is_home"] = np.nan
+        teams.append(team)
+
+    teams = pd.DataFrame(teams)
+    print(teams.head())
+    teams.index = teams["code"]
+
+    final_week_df = player_df.loc[(player_df["gameweek"] == last_gameweek) &
+                                  (player_df["season"] == last_season)]
+
+    final_week_teams = teams.loc[final_week_df["team_code"]]
+    player_df.loc[(player_df["gameweek"] == last_gameweek) &
+                  (player_df["season"] == last_season), "target_team"] = final_week_teams["next_opponent"].values
+    player_df.loc[(player_df["gameweek"] == last_gameweek) &
+                  (player_df["season"] == last_season), "target_home"] = final_week_teams["is_home"].values.astype(int)
+
+    player_df = add_team_features(player_df)
+    player_df = add_bayes_features(player_df)
+
+    player_df.to_csv("/data/data.csv")
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.feature_selection import SelectKBest, f_regression
 from xgboost import XGBRegressor
 from bayesian_models import BayesianPointsRegressor, MeanPointsRegressor
+import logging
 
 
 def get_data(test_week, test_season, one_hot):
@@ -30,10 +31,17 @@ def get_data(test_week, test_season, one_hot):
                      "web_name", "index", "team_code",
                      "season", "gameweek"], axis=1).astype(np.float64)
     X = X.dropna(how="all", axis=1)
+    fname = "/data/features.csv"
+    feature_whitelist = pd.read_csv("data/features.csv", header=None)[1].values()
+    X = X[feature_whitelist]
+
+    # logging.info("Using {} features. Saving features to file {}.".format(X.shape[1], fname))
+    # logging.info("Edit this file to prune features. Delete to use all.")
+    pd.Series(X.columns).to_csv(fname)
+
     try:
         X = X.loc[:, ((X != X.iloc[0, :]) &
                       (X.notnull())).any()]
-        print(X.shape)
     except:
         print("Error")
         print(X.iloc[0, :])
@@ -59,23 +67,13 @@ models = {
     "xgb":
     XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
     "xgb2":
-    XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=2),
-    "xgb3":
-    XGBRegressor(n_estimators=128, learning_rate=0.1, max_depth=2),
+        XGBRegressor(n_estimators=128, learning_rate=0.05, max_depth=2),
     "rf":
-    make_pipeline(Imputer(), RandomForestRegressor(n_estimators=100, max_depth=3)),
+        make_pipeline(Imputer(), RandomForestRegressor(n_estimators=256, max_depth=3)),
     "linear":
     make_pipeline(
         Imputer(), MinMaxScaler(), RidgeCV(),
     ),
-    "constant":
-        make_pipeline(
-            Imputer(), MinMaxScaler(), Ridge(1e-9),
-        ),
-    "linear1":
-        make_pipeline(
-            Imputer(), MinMaxScaler(), Ridge(1),
-        ),
     "linear2":
         make_pipeline(
             Imputer(), MinMaxScaler(), Ridge(100),
@@ -90,7 +88,10 @@ models = {
     # ),
     "polynomial_fs":
     make_pipeline(
-        Imputer(), PolynomialFeatures(), MinMaxScaler(), SelectKBest(f_regression, k=32),  RidgeCV(),
+        Imputer(),
+        # MinMaxScaler(), SelectKBest(f_regression, k=12),
+        PolynomialFeatures(),
+        MinMaxScaler(), SelectKBest(f_regression, k=32), RidgeCV(),
     ),
     "simple_mean":
     MeanPointsRegressor(),

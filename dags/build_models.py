@@ -15,13 +15,13 @@ def build_models(execution_date, **kwargs):
     for name, model in model_utils.models.items():
         logging.info(name)
         if name == "linear":
-            Xtrain, Xtest, ytrain, ytest, dftest = model_utils.get_data(test_week=None,
-                                                                        test_season=2017,
-                                                                        one_hot=True)
+            Xtrain, Xtest, ytrain, ytest, dftrain, dftest = model_utils.get_data(test_week=None,
+                                                                                 test_season=2017,
+                                                                                 one_hot=True)
         else:
-            Xtrain, Xtest, ytrain, ytest, dftest = model_utils.get_data(test_week=None,
-                                                                        test_season=2017,
-                                                                        one_hot=False)
+            Xtrain, Xtest, ytrain, ytest, dftrain, dftest = model_utils.get_data(test_week=None,
+                                                                                 test_season=2017,
+                                                                                 one_hot=False)
         model = model.fit(Xtrain, ytrain)
         preds[name] = pd.Series(model.predict(Xtest)).values
         with open("/models/{}.pkl".format(name), "wb") as f:
@@ -45,7 +45,7 @@ def build_models(execution_date, **kwargs):
                                                      3: "MF",
                                                      4: "FW"})
     preds = pd.DataFrame(preds)
-    preds["mean_model"] = (preds["linear"] + preds["xgb"] +
+    preds["mean_model"] = (preds["linear2"] + preds["xgb"] +
                            preds["rf"] + preds["polynomial_fs"]) / 4
     print(preds.head())
     preds = pd.concat([preds.reset_index(), dftest.reset_index()], axis=1)

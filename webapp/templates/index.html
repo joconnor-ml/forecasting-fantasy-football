@@ -14,7 +14,6 @@
         <th>Opponent</th>
         <th>Venue</th>
         <th>Global Prior</th>
-        <th>Linear Model</th>
         <th>Mean Model</th>
     </tr>
     {% for pred in preds %}
@@ -25,8 +24,7 @@
         <td>{{ pred["name_x"] }}</td>
         <td>{{ pred["name_y"] }}</td>
         <td>{{ "Home" if pred["is_home"] else "Away" }}</td>
-        <td>{{ pred["bayes_global_prior"] }}</td>
-        <td>{{ pred["linear"] }}</td>
+        <td>{{ pred["simple_mean"] }}</td>
         <td>{{ pred["mean_model"] }}</td>
     </tr>
     {% endfor %}
