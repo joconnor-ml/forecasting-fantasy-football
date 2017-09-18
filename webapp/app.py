@@ -22,7 +22,7 @@ def hello_world():
 def top(n):
     # Display top n players
     preds = list(pred_db.aggregate([
-        {"$sort": {"mean_model": 1}},
+        {"$sort": {"mean_model": -1}},
         {"$limit": n}
     ]))
     titles = preds[0].keys()

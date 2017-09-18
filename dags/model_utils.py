@@ -32,8 +32,8 @@ def get_data(test_week, test_season, one_hot):
                      "season", "gameweek"], axis=1).astype(np.float64)
     X = X.dropna(how="all", axis=1)
     fname = "/data/features.csv"
-    feature_whitelist = pd.read_csv("data/features.csv", header=None)[1].values()
-    X = X[feature_whitelist]
+    # feature_whitelist = pd.read_csv(fname, header=None)[1].values
+    # X = X[feature_whitelist]
 
     # logging.info("Using {} features. Saving features to file {}.".format(X.shape[1], fname))
     # logging.info("Edit this file to prune features. Delete to use all.")
@@ -63,11 +63,45 @@ def get_data(test_week, test_season, one_hot):
         return X.loc[train], X.loc[test], y.loc[train], y.loc[test], df.loc[train, info_features], df.loc[
             test, info_features]
 
+
+from sklearn.base import BaseEstimator, RegressorMixin
+
+
+class GroupedModel(BaseEstimator, RegressorMixin):
+    def __init__(self, estimator, groupby):
+        self.estimator = estimator
+        self.groupby = groupby
+        self.models = {}
+
+    def fit(self, X, y, **kwargs):
+        for name in X[self.groupby].unique():
+            filt = X[self.groupby] == name
+            self.models[name] = self.estimator.fit(X[filt], y[filt], **kwargs)
+        return self
+
+    def predict(self, X, **kwargs):
+        preds = np.zeros(X.shape[0])
+        for name in X[self.groupby].unique():
+            filt = X[self.groupby] == name
+            preds[filt] = self.models[name].predict(X[filt], **kwargs)
+        return preds
+
+    def predict_proba(self, X, **kwargs):
+        preds = np.zeros(X.shape[0])
+        for name in X[self.groupby].unique():
+            filt = X[self.groupby] == name
+            preds[filt] = self.models[name].predict(X[filt], **kwargs)
+        return preds
+
+
 models = {
     "xgb":
     XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
+    "grouped":
+        GroupedModel(XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
+                     groupby="element_type"),
     "xgb2":
-        XGBRegressor(n_estimators=128, learning_rate=0.05, max_depth=2),
+        XGBRegressor(n_estimators=512, learning_rate=0.01, max_depth=1),
     "rf":
         make_pipeline(Imputer(), RandomForestRegressor(n_estimators=256, max_depth=3)),
     "linear":

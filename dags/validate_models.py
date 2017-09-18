@@ -92,7 +92,7 @@ def validate_models(execution_date, **kwargs):
         logging.info(name)
         ys, preds, scores, mae_scores = validate_model(model, name)
         preds = np.array(preds)
-        if name in ["xgb", "linear2", "rf", "polynomial_fs"]:
+        if name in ["xgb", "grouped", "linear2", "rf", "polynomial_fs"]:
             if sum_preds is None:
                 sum_preds = preds
             else:
