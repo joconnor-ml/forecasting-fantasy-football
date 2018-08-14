@@ -64,7 +64,37 @@ def get_data(test_week, test_season, one_hot):
             test, info_features]
 
 
-from sklearn.base import BaseEstimator, RegressorMixin
+from sklearn.base import BaseEstimator, RegressorMixin, clone
+
+
+class ReducedFeatures(BaseEstimator, RegressorMixin):
+    """Fit separate models for rows with missing values in the selected columns.
+    At test time, use predictions from the relevant model depending on whether
+    value is missing or not."""
+
+    def __init__(self, estimator, features):
+        self.estimator = estimator
+        self.features = features
+        self.models = {}
+
+    def fit(self, X, y, **kwargs):
+        for feature in self.features:
+            filt = X[feature].isnull()
+            temp_X = X.drop(feature, axis=1)
+            temp_y = y
+            self.models[feature] = clone(self.estimator).fit(temp_X, temp_y, **kwargs)
+            self.main_model = clone(self.estimator).fit(X, y, **kwargs)
+        return self
+
+    def predict(self, X, **kwargs):
+        preds = np.zeros(X.shape[0])
+        for feature in self.features:
+            filt = X[feature].isnull()
+            temp_X = X[filt].drop(feature, axis=1)
+            preds[filt] = self.models[feature].predict(temp_X, **kwargs)
+            if (~filt).sum() > 0:
+                preds[~filt] = self.main_model.predict(X[~filt], **kwargs)
+        return preds
 
 
 class GroupedModel(BaseEstimator, RegressorMixin):
@@ -76,7 +106,7 @@ class GroupedModel(BaseEstimator, RegressorMixin):
     def fit(self, X, y, **kwargs):
         for name in X[self.groupby].unique():
             filt = X[self.groupby] == name
-            self.models[name] = self.estimator.fit(X[filt], y[filt], **kwargs)
+            self.models[name] = clone(self.estimator).fit(X[filt], y[filt], **kwargs)
         return self
 
     def predict(self, X, **kwargs):
@@ -97,25 +127,43 @@ class GroupedModel(BaseEstimator, RegressorMixin):
 models = {
     "xgb":
     XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
-    "grouped":
+    "xgb_grouped":
         GroupedModel(XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
                      groupby="element_type"),
-    "xgb2":
-        XGBRegressor(n_estimators=512, learning_rate=0.01, max_depth=1),
+    "xgb_reduced_last_season":
+        ReducedFeatures(XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
+                        features=["last_season_ppm"]),
+    "xgb_reduced_3_games":
+        ReducedFeatures(XGBRegressor(n_estimators=64, learning_rate=0.1, max_depth=1),
+                        features=["total_points_team_last3"]),
+    # "xgb2":
+    #    XGBRegressor(n_estimators=512, learning_rate=0.01, max_depth=1),
     "rf":
         make_pipeline(Imputer(), RandomForestRegressor(n_estimators=256, max_depth=3)),
     "linear":
     make_pipeline(
         Imputer(), MinMaxScaler(), RidgeCV(),
     ),
+    "grouped_linear":
+        GroupedModel(make_pipeline(
+            Imputer(), MinMaxScaler(), RidgeCV(),
+        ), groupby="element_type"),
+    "reduced_linear":
+        ReducedFeatures(make_pipeline(
+            Imputer(), MinMaxScaler(), RidgeCV(),
+        ), features=["last_season_ppm"]),
     "linear2":
         make_pipeline(
             Imputer(), MinMaxScaler(), Ridge(100),
         ),
-    "linear3":
-        make_pipeline(
-            Imputer(), MinMaxScaler(), Ridge(1000),
-        ),
+    "grouped_linear2":
+        GroupedModel(make_pipeline(
+            Imputer(), MinMaxScaler(), Ridge(100),
+        ), groupby="element_type"),
+    "reduced_linear2":
+        ReducedFeatures(make_pipeline(
+            Imputer(), MinMaxScaler(), Ridge(100),
+        ), features=["last_season_ppm"]),
     # "polynomial_pca":
     # make_pipeline(
     #    Imputer(), PolynomialFeatures(), MinMaxScaler(), RidgeCV(),
@@ -123,10 +171,17 @@ models = {
     "polynomial_fs":
     make_pipeline(
         Imputer(),
-        # MinMaxScaler(), SelectKBest(f_regression, k=12),
+        MinMaxScaler(),  # SelectKBest(f_regression, k=12),
         PolynomialFeatures(),
-        MinMaxScaler(), SelectKBest(f_regression, k=32), RidgeCV(),
+        MinMaxScaler(), SelectKBest(f_regression, k=32), Ridge(),
     ),
+    "grouped_polynomial_fs":
+        GroupedModel(make_pipeline(
+            Imputer(),
+            MinMaxScaler(),  # SelectKBest(f_regression, k=12),
+            PolynomialFeatures(),
+            MinMaxScaler(), SelectKBest(f_regression, k=32), Ridge(),
+        ), groupby="element_type"),
     "simple_mean":
     MeanPointsRegressor(),
     "bayes_global_prior":

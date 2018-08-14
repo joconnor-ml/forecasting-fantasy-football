@@ -12,8 +12,8 @@ services:
         ports:
             - "27017:27017"
         volumes:
-            - ~/data_clone/db:/data/db'
-            - ~/forecasting-fantasy-football/dump:/dump
+            - ./data/db:/data/db'
+            - ./data/dump:/dump
 
     webserver:
         image: puckel/docker-airflow:1.8.1-1
@@ -26,11 +26,11 @@ services:
             - EXECUTOR=Local
             - MONGO_URL=mongodb://mongo:27017
         volumes:
-            - ~/forecasting-fantasy-football/requirements.txt:/requirements.txt
-            - ~/forecasting-fantasy-football/dags:/usr/local/airflow/dags
-            - ~/forecasting-fantasy-football/data:/data
-            - ~/forecasting-fantasy-football/models:/models
-            - ~/forecasting-fantasy-football/preds:/preds
+            - ./requirements.txt:/requirements.txt
+            - ./dags:/usr/local/airflow/dags
+            - ./data:/data
+            - ./models:/models
+            - ./preds:/preds
         ports:
             - "8080:8080"
         command: webserver
@@ -42,6 +42,6 @@ services:
         ports:
             - "5000:5000"
         volumes:
-            - ~/forecasting-fantasy-football/webapp:/app
+            - ./webapp:/app
         environment:
             - MONGO_URL=mongodb://mongo:27017

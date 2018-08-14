@@ -45,8 +45,9 @@ def build_models(execution_date, **kwargs):
                                                      3: "MF",
                                                      4: "FW"})
     preds = pd.DataFrame(preds)
-    preds["mean_model"] = (preds["linear2"] + preds["xgb"] +
-                           preds["rf"] + preds["polynomial_fs"]) / 4
+    from validate_models import ensemble_models
+
+    preds["mean_model"] = preds[ensemble_models].mean(axis=1)
     print(preds.head())
     preds = pd.concat([preds.reset_index(), dftest.reset_index()], axis=1)
 

@@ -9,18 +9,21 @@ Built on Apache Airflow, Scikit-Learn and Pandas.
 
 ## Installation
 
-`git clone ...`
+`git clone https://github.com/nuebar/forecasting-fantasy-football.git`
 
-`cd ...`
+`cd forecasting-fantasy-football`
 
-`docker-compose -f docker-compose-fff.yml up -d`
+`docker-compose -f docker-compose-fff.yml up -d` or `bash install.sh`.
 
 ## Airflow
 
-To access the UI, navigate to localhost:8080.
+To access the Airflow UI, navigate to localhost:8080.
 
-To access the CLI, use `sudo docker exec -ti forecastingfantasyfootball_webserver_1 bash`.
+To access the Airflow CLI, use `bash airflow.sh`.
 
 ## Predictions
 
-Daily predictions are saved as CSV files to forecasting-fantasy-football/predictions.
+Predictions for the next week are served by a simple webapp found at localhost:5000. Try the following:
+ - localhost:5000/top/<n>
+ - localhost:5000/club/<club>
+ - localhost:5000/position/<position>, 

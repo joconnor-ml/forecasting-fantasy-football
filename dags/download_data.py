@@ -1,12 +1,8 @@
-"""download fpl datafrom web api to file.
-Could stick them in a database? Might be a nice use of MongoDB.
-Or is this somewhere to use Kafka?"""
-from datetime import datetime
 import requests
 import time
 import logging
 import os
-
+from datetime import datetime
 from pymongo import MongoClient
 
 PLAYER_URL = "https://fantasy.premierleague.com/drf/element-summary/"
@@ -37,7 +33,15 @@ def download_data(execution_date, **kwargs):
     logging.info("got player details")
     # now the player history data
     collection = db["player_data"]
-    for player_id in range(1, max_player_id + 1):
+
+    try:
+        with open(".download_progress", "wt") as f:
+            start = int(f.read()) + 1
+        logging.info("Resuming download from player ID {}".format(start))
+    except:
+        start = 1
+
+    for player_id in range(start, max_player_id + 1):
         if player_id % 100 == 0:
             logging.info(player_id)
         response = requests.get("{}/{}".format(PLAYER_URL, player_id))
@@ -47,10 +51,15 @@ def download_data(execution_date, **kwargs):
         data["season"] = season
         collection.update({"id": data["id"], "season": season},
                           data, upsert=True)
+
+        with open(".download_progress", "wt") as f:
+            f.write(str(player_id))
         time.sleep(1)
+
+    with open(".download_progress", "wt") as f:
+        f.write("0")
+
 
 
 if __name__ == "__main__":
-    from datetime import datetime
-
     download_data(datetime.today(), None)

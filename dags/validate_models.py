@@ -11,8 +11,11 @@ client = MongoClient(os.environ['MONGO_URL'])
 db = client["fantasy_football"]  # Select the database
 score_db = db["scores"]  # Select the collection
 
-test_weeks = list(range(2, 37)) + [39, 40, 41]
+test_weeks = list(range(2, 37)) + [39, 40, 41, 42]
 
+ensemble_models = ["xgb", "xgb_grouped", "xgb_reduced_last_season",
+                   "linear2", "grouped_linear2", "reduced_linear2",
+                   "polynomial_fs"]
 
 def validate_model(model, model_name):
     pred_list = []
@@ -30,7 +33,7 @@ def validate_model(model, model_name):
                                                                                    one_hot=False)
         preds = model.fit(Xtrain, ytrain).predict((Xtest))
         imps = None
-        if "xgb" in model_name:
+        if "xgb" == model_name:
             imps = pd.Series(model.booster().get_fscore()).sort_values(ascending=False)
         # if "linear" in model_name:
         #    try:
@@ -70,14 +73,14 @@ def validate_model_season2(model, model_name):
     preds = model.fit(Xtrain.loc[df_train.gameweek == train_week],
                       ytrain.loc[df_train.gameweek == train_week]).predict(Xtest)
     imps = None
-    if "xgb" in model_name:
+    if "xgb" == model_name:
         imps = pd.Series(model.booster().get_fscore()).sort_values(ascending=False)
-    if "linear" in model_name:
-        try:
-            imps = pd.Series(model.steps[-1][-1].coef_, index=Xtrain.columns).sort_values(ascending=False)
-        except Exception as e:
-            logging.warning("Saving importances failed:")
-            logging.warning(e)
+    # if "linear" in model_name:
+    #    try:
+    #        imps = pd.Series(model.steps[-1][-1].coef_, index=Xtrain.columns).sort_values(ascending=False)
+    #    except Exception as e:
+    #        logging.warning("Saving importances failed:")
+    #        logging.warning(e)
     if imps is not None:
         logging.info("\n{}".format(imps.head()))
         imps.to_csv("/data/{}_imps_{}.csv".format(model_name, test_week))
@@ -92,26 +95,31 @@ def validate_models(execution_date, **kwargs):
         logging.info(name)
         ys, preds, scores, mae_scores = validate_model(model, name)
         preds = np.array(preds)
-        if name in ["xgb", "grouped", "linear2", "rf", "polynomial_fs"]:
+
+        if name in ensemble_models:
             if sum_preds is None:
                 sum_preds = preds
             else:
                 sum_preds += preds
         all_scores.append(scores)
         all_mae_scores.append(mae_scores)
-    sum_preds = sum_preds / 4
     scores = pd.concat(all_scores, axis=1)
-    scores["mean_model"] = [mean_squared_error(y, p) ** 0.5 for y, p in zip(ys, sum_preds)]
+    if ensemble_models:
+        sum_preds = sum_preds / len(ensemble_models)
+        scores["mean_model"] = [mean_squared_error(y, p) ** 0.5 for y, p in zip(ys, sum_preds)]
     scores.to_csv("/data/validation_scores.csv")
 
     mae_scores = pd.concat(all_mae_scores, axis=1)
-    mae_scores["mean_model"] = [mean_absolute_error(y, p) for y, p in zip(ys, sum_preds)]
+    if ensemble_models:
+        mae_scores["mean_model"] = [mean_absolute_error(y, p) for y, p in zip(ys, sum_preds)]
     mae_scores.to_csv("/data/validation_mae_scores.csv")
 
     score_db.drop()
     score_db.insert_many(scores.reset_index().to_dict("records"))
     logging.info("\n{}".format(scores.mean()))
     logging.info("\n{}".format(mae_scores.mean()))
+    logging.info("\n{}".format(scores.ewm(10).mean().iloc[-1]))
+    logging.info("\n{}".format(mae_scores.ewm(10).mean().iloc[-1]))
 
     for name, model in model_utils.models.items():
         logging.info(name)

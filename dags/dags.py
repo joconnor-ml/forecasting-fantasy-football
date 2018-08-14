@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from airflow.models import DAG
-from airflow.operators import PythonOperator
+from airflow.operators import PythonOperator, LatestOnlyOperator
 from build_models import build_models
 from download_data import download_data
 from transform_data import transform_data
@@ -18,7 +18,7 @@ def make_task(func):
     
 args = {
     'owner': 'airflow',
-    'start_date': datetime(2017, 8, 6, 10, 0, 0),
+    'start_date': datetime(2018, 8, 9, 10, 0, 0),
 }
 
 dag = DAG(
@@ -29,12 +29,13 @@ dag = DAG(
 
 
 # define tasks
+latest_task = LatestOnlyOperator(
+    task_id="latest_only",
+    dag=dag,
+)
 import_task = make_task(download_data)
 transform_task = make_task(transform_data)
 model_task = make_task(build_models)
 validate_task = make_task(validate_models)
 
-# define dependencies
-transform_task.set_upstream(import_task)
-model_task.set_upstream(transform_task)
-validate_task.set_upstream(transform_task)
+latest_task >> import_task >> transform_task >> model_task >> validate_task
