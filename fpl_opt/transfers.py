@@ -113,6 +113,7 @@ def get_decision_array_2d(name, n_players, n_weeks):
         for i in range(n_players)
     ] for j in range(n_weeks)])
 
+
 class MultiHorizonTransferOptimiser(TransferOptimiser):
     """We now plan transfer decisions over multiple weeks. This means we need a 2d array of expected
     scores (n_players x n_weeks) and 2d arrays of decision variables"""
@@ -169,23 +170,3 @@ class MultiHorizonTransferOptimiser(TransferOptimiser):
         model.solve()
 
         return transfer_in_decisions_all, transfer_out_decisions_all, sub_decisions_all, sub_decisions_all, captain_decisions_all
-
-    def apply_formation_constraints(self, model, squad, starters, subs, captains):
-        for position, data in position_data.items():
-            # formation constraints
-            model += sum(starter for starter, position in zip(starters, self.positions) if position == data["position_id"]) >= data["min_starters"]
-            model += sum(starter for starter, position in zip(starters, self.positions) if position == data["position_id"]) <= data["max_starters"]
-            model += sum(selected for selected, position in zip(squad, self.positions) if position == data["position_id"]) == data["num_total"]
-
-        # club constraint
-        for club_id in np.unique(self.clubs):
-            model += sum(selected for selected, club in zip(squad, self.clubs) if club == club_id) <= 3  # max 3 players
-
-        # total team size
-        model += sum(starters) == 11
-        model += sum(squad) == 15
-        model += sum(captains) == 1
-
-        for i in range(self.num_players):
-            model += (starters[i] - captains[i]) >= 0  # captain must also be on team
-            model += (starters[i] + subs[i]) <= 1  # subs must not be on team
