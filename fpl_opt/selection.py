@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import pulp
 
-COLS_TO_PRINT = [[
+COLS_TO_PRINT = [
     "first_name", "second_name", "expected_score", "price", "first_team", "captain", "sub"
-]]
+]
 
 
 def select_team(expected_scores, prices, positions, clubs, total_budget=100, sub_factor=0.2):
