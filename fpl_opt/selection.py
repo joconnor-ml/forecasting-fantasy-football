@@ -73,13 +73,13 @@ def get_selection_df(decisions, captain_decisions, sub_decisions):
     selection_data = []
     for i in range(len(decisions)):
         if decisions[i].value() == 1:
-            selection_data.append({"index": i, "first_team": True, "sub": False, "captain": bool(captain_decisions[i].value())})
+            selection_data.append({"player_index": i, "first_team": True, "sub": False, "captain": bool(captain_decisions[i].value())})
 
     for i in range(len(sub_decisions)):
         if sub_decisions[i].value() == 1:
-            selection_data.append({"index": i, "first_team": False, "sub": True, "captain": False})
+            selection_data.append({"player_index": i, "first_team": False, "sub": True, "captain": False})
 
-    return pd.DataFrame(selection_data, index="index")
+    return pd.DataFrame(selection_data).set_index("player_index")
 
 
 def print_selection(player_df, selection_df):
