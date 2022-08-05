@@ -83,7 +83,7 @@ def get_selection_df(decisions, captain_decisions, sub_decisions):
 
 
 def print_selection(player_df, selection_df):
-    player_data = player_df.join(selection_df)[[
+    player_data = player_df.join(selection_df, how="right")[[
         "first_name", "second_name", "expected_score", "price", "first_team", "captain", "sub"
     ]]
     print(player_data)
