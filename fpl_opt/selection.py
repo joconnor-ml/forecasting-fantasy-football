@@ -66,3 +66,21 @@ def select_team(expected_scores, prices, positions, clubs, total_budget=100, sub
     print("Total expected score = {}".format(model.objective.value()))
 
     return decisions, captain_decisions, sub_decisions
+
+
+def print_selection(decisions, captain_decisions, sub_decisions, names, expected_scores, prices)
+    player_indices = []
+
+    print()
+    print("First Team:")
+    for i in range(len(decisions)):
+        if decisions[i].value() == 1:
+            print("{}{}".format(names[i], "*" if captain_decisions[i].value() == 1 else ""), expected_scores[i],
+                  prices[i])
+            player_indices.append(i)
+    print()
+    print("Subs:")
+    for i in range(len(sub_decisions)):
+        if sub_decisions[i].value() == 1:
+            print(names[i], expected_scores[i], prices[i])
+            player_indices.append(i)
