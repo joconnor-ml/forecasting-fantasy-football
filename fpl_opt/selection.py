@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 import pulp
 
+COLS_TO_PRINT = [[
+    "first_name", "second_name", "expected_score", "price", "first_team", "captain", "sub"
+]]
+
 
 def select_team(expected_scores, prices, positions, clubs, total_budget=100, sub_factor=0.2):
     num_players = len(expected_scores)
@@ -69,21 +73,16 @@ def select_team(expected_scores, prices, positions, clubs, total_budget=100, sub
     return decisions, captain_decisions, sub_decisions
 
 
-def get_selection_df(decisions, captain_decisions, sub_decisions):
+def get_selection_df(decisions, captain_decisions, sub_decisions, player_df):
     selection_data = []
     for i in range(len(decisions)):
         if decisions[i].value() == 1:
-            selection_data.append({"player_index": i, "first_team": True, "sub": False, "captain": bool(captain_decisions[i].value())})
+            selection_data.append({
+                "player_index": i, "first_team": True, "sub": False, "captain": bool(captain_decisions[i].value())
+            })
 
     for i in range(len(sub_decisions)):
         if sub_decisions[i].value() == 1:
             selection_data.append({"player_index": i, "first_team": False, "sub": True, "captain": False})
 
-    return pd.DataFrame(selection_data).set_index("player_index")
-
-
-def print_selection(player_df, selection_df):
-    player_data = player_df.join(selection_df, how="right")[[
-        "first_name", "second_name", "expected_score", "price", "first_team", "captain", "sub"
-    ]]
-    print(player_data)
+    return pd.DataFrame(selection_data).set_index("player_index").join(player_df, how="left")
