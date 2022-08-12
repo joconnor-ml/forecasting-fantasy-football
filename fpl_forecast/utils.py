@@ -25,3 +25,22 @@ def generate_rolling_features(df, cols, windows=(3, 10, 19), aggs=("mean", "medi
         for agg in aggs
     )
     return pd.concat(feats, axis=1)
+
+
+def get_score_distributions():
+    df = pd.read_csv(
+        "https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data/2021-22/gws/merged_gw.csv"
+    )
+    score_distributions = (
+        df[df["minutes"] > 0]
+        .groupby("element")["total_points"]
+        .value_counts(normalize=True)
+    )
+    score_distributions = (
+        score_distributions.groupby(level=0)
+        .cumsum()
+        .to_frame("p")
+        .reset_index()
+        .rename({"total_points": "sampled_points"}, axis=1)
+    )
+    return score_distributions

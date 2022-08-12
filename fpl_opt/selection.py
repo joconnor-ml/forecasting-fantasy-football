@@ -20,7 +20,7 @@ def select_team(
     clubs,
     total_budget=100,
     sub_factors=0.2,
-    playing_chance=None
+    playing_chance=None,
 ):
     if type(sub_factors) in (float, int):
         sub_factors = [sub_factors] * 4
