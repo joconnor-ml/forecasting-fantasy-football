@@ -15,13 +15,17 @@ COLS_TO_PRINT = [
 
 def select_team(
     expected_scores,
-    playing_chance,
     prices,
     positions,
     clubs,
     total_budget=100,
     sub_factors=0.2,
+    playing_chance=None
 ):
+    if type(sub_factors) in (float, int):
+        sub_factors = [sub_factors] * 4
+    if playing_chance is None:
+        playing_chance = np.ones_like(expected_scores)
     num_players = len(expected_scores)
     model = pulp.LpProblem("Constrained value maximisation", pulp.LpMaximize)
     decisions = [
