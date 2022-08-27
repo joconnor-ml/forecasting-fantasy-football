@@ -1,6 +1,7 @@
 import pandas as pd
-from fpl_forecast import utils as forecast_utils
+
 from fpl_forecast import total_points, playing_chance
+from fpl_forecast import utils as forecast_utils
 
 TASKS = {"total_points": total_points, "playing_chance": playing_chance}
 
@@ -35,7 +36,7 @@ def main():
 
         forecast_df["p"] = module.predict(model, features)
 
-        forecast_df.query(f"GW=={latest_week}").sort_values("value")[
+        out_df = forecast_df.query(f"GW=={latest_week}").sort_values("value")[
             [
                 "code",
                 "name",
@@ -47,7 +48,9 @@ def main():
                 "total_points",
                 "p",
             ]
-        ].to_csv(f"{name}.csv", index=True)
+        ]
+        out_df["price"] = out_df["value"] / 10
+        out_df.to_csv(f"{name}.csv", index=False)
 
 
 if __name__ == "__main__":

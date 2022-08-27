@@ -3,8 +3,7 @@ import pandas as pd
 import pulp
 
 COLS_TO_PRINT = [
-    "first_name",
-    "second_name",
+    "name",
     "expected_score",
     "price",
     "first_team",

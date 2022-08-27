@@ -21,3 +21,6 @@ jobs:
     - name: Generate forecasts
       run: |
         python scripts/generate_forecasts.py
+    - name: Select_team
+      run: |
+        python scripts/select_new_team.py
