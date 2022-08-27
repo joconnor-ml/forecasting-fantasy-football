@@ -37,6 +37,7 @@ def main():
 
         forecast_df.query(f"GW=={latest_week}").sort_values("value")[
             [
+                "code",
                 "name",
                 "team",
                 "position",
@@ -46,7 +47,7 @@ def main():
                 "total_points",
                 "p",
             ]
-        ].to_csv(f"{name}.csv", index=False)
+        ].to_csv(f"{name}.csv", index=True)
 
 
 if __name__ == "__main__":
