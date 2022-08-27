@@ -12,9 +12,7 @@ position_data = {
 def get_decision_array(name, length):
     return np.array(
         [
-            pulp.LpVariable(
-                "{}_{}".format(name, i), lowBound=0, upBound=1, cat="Integer"
-            )
+            pulp.LpVariable(f"{name}_{i}", lowBound=0, upBound=1, cat="Integer")
             for i in range(length)
         ]
     )
@@ -127,7 +125,7 @@ class TransferOptimiser:
         )
         status = model.solve()
 
-        print("Solver status: {}".format(status))
+        print(f"Solver status: {status}")
 
         return (
             transfer_in_decisions,

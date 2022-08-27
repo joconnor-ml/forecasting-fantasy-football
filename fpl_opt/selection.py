@@ -29,11 +29,11 @@ def select_team(
     num_players = len(expected_scores)
     model = pulp.LpProblem("Constrained value maximisation", pulp.LpMaximize)
     decisions = [
-        pulp.LpVariable("first_team_{}".format(i), lowBound=0, upBound=1, cat="Integer")
+        pulp.LpVariable(f"first_team_{i}", lowBound=0, upBound=1, cat="Integer")
         for i in range(num_players)
     ]
     captain_decisions = [
-        pulp.LpVariable("captain_{}".format(i), lowBound=0, upBound=1, cat="Integer")
+        pulp.LpVariable(f"captain_{i}", lowBound=0, upBound=1, cat="Integer")
         for i in range(num_players)
     ]
     NUM_SUBS = 4
@@ -154,7 +154,7 @@ def select_team(
         ) <= 1  # subs must not be on team
 
     model.solve()
-    print("Total expected score = {}".format(model.objective.value()))
+    print(f"Total expected score = {model.objective.value()}")
 
     return decisions, captain_decisions, total_sub_decisions
 
