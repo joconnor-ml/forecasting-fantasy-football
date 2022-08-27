@@ -86,5 +86,6 @@ def get_scores(preds, targets):
         mean_squared_error(targets, preds) ** 0.5, mean_absolute_error(targets, preds)
     )
 
+
 def predict(model, features):
     return model.predict(features)

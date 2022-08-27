@@ -4,3 +4,6 @@ pandas==1.4.3
 pulp==2.6.0
 scikit_learn==1.1.2
 xgboost==1.6.2
+
+./fpl_forecast
+./fpl_opt
