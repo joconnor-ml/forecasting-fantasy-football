@@ -20,11 +20,20 @@ jobs:
         pip install -r requirements.txt
     - name: Train models
       run: |
-        python -m scripts.train_points_model --horizon 1 --position GK --outdir ./
-        python -m scripts.train_points_model --horizon 1 --position DEF --outdir ./
-        python -m scripts.train_points_model --horizon 1 --position MID --outdir ./
-        python -m scripts.train_points_model --horizon 1 --position FWD --outdir ./
-        python -m scripts.train_points_model --horizon 2 --position GK --outdir ./
-        python -m scripts.train_points_model --horizon 2 --position DEF --outdir ./
-        python -m scripts.train_points_model --horizon 2 --position MID --outdir ./
-        python -m scripts.train_points_model --horizon 2 --position FWD --outdir ./
+        python -m scripts.train_points_model --horizon 1 --position GK --outdir ./models
+        python -m scripts.train_points_model --horizon 1 --position DEF --outdir ./models
+        python -m scripts.train_points_model --horizon 1 --position MID --outdir ./models
+        python -m scripts.train_points_model --horizon 1 --position FWD --outdir ./models
+        python -m scripts.train_points_model --horizon 2 --position GK --outdir ./models
+        python -m scripts.train_points_model --horizon 2 --position DEF --outdir ./models
+        python -m scripts.train_points_model --horizon 2 --position MID --outdir ./models
+        python -m scripts.train_points_model --horizon 2 --position FWD --outdir ./models
+        tar -czvf models.tar.gz ./models
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: models
+        path: models.tar.gz
+        retention-days: 30
+
+
