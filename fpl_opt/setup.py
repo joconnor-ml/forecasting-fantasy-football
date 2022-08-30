@@ -1,8 +1,8 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name="fpl_opt",
     version="1.0",
-    py_modules=["fpl_opt"],
+    packages=find_packages(),
     install_requires=["numpy", "pandas", "pulp"],
 )

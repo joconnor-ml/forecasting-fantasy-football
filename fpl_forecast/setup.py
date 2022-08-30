@@ -1,8 +1,8 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name="fpl_forecast",
     version="1.0",
-    py_modules=["fpl_forecast"],
     install_requires=["scikit_learn", "xgboost", "pandas"],
+    packages=find_packages()
 )
