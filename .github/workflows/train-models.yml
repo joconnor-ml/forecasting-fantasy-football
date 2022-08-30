@@ -1,4 +1,4 @@
-name: Python application
+name: Model Training
 
 on:
   push
@@ -18,10 +18,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Generate forecasts
-      run: |
-        python scripts/generate_forecasts.py
-    - name: Select_team
+    - name: Train models
       run: |
         python -m scripts.train_points_model --horizon 1 --position GK --outdir ./
         python -m scripts.train_points_model --horizon 1 --position DEF --outdir ./
