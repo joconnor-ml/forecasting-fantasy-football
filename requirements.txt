@@ -5,5 +5,5 @@ pulp==2.6.0
 scikit_learn==1.1.2
 xgboost==1.6.2
 
-./fpl_forecast
-./fpl_opt
+-e ./fpl_forecast
+-e ./fpl_opt

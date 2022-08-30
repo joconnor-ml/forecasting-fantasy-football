@@ -11,7 +11,9 @@ def main():
     decisions, captain_decisions, sub_decisions = selection.select_team(
         player_df["expected_score"],
         player_df["price"],
-        player_df["position"].replace({"GKP": "GK"}).map({"GK": 1, "DEF": 2, "MID": 3, "FWD": 4}),
+        player_df["position"]
+        .replace({"GKP": "GK"})
+        .map({"GK": 1, "DEF": 2, "MID": 3, "FWD": 4}),
         player_df["team"],
         playing_chance=player_df["playing_chance"],
         sub_factors=[0.15, 0.15, 0.15, 0.05],

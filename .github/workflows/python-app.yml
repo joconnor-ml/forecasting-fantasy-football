@@ -23,4 +23,7 @@ jobs:
         python scripts/generate_forecasts.py
     - name: Select_team
       run: |
-        python scripts/select_new_team.py
+        python -m scripts.train_points_model --horizon 1 --position GK --outdir ./
+        python -m scripts.train_points_model --horizon 1 --position DEF --outdir ./
+        python -m scripts.train_points_model --horizon 1 --position MID --outdir ./
+        python -m scripts.train_points_model --horizon 1 --position FWD --outdir ./
