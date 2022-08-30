@@ -24,3 +24,7 @@ jobs:
         python -m scripts.train_points_model --horizon 1 --position DEF --outdir ./
         python -m scripts.train_points_model --horizon 1 --position MID --outdir ./
         python -m scripts.train_points_model --horizon 1 --position FWD --outdir ./
+        python -m scripts.train_points_model --horizon 2 --position GK --outdir ./
+        python -m scripts.train_points_model --horizon 2 --position DEF --outdir ./
+        python -m scripts.train_points_model --horizon 2 --position MID --outdir ./
+        python -m scripts.train_points_model --horizon 2 --position FWD --outdir ./
