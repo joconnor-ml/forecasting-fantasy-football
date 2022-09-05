@@ -77,11 +77,10 @@ def train_filter(df, targets):
     )
 
 
-def inference_filter(df, targets):
+def inference_filter(df):
     (
-        targets["total_points"].notnull()
-        & (df["selected_by_percent"] > 1)
-        & (df["minutes"] > 0)
+        (df["GW"] == 5)
+        & (df["season"] == "2022-23")
     )
 
 
@@ -115,11 +114,14 @@ def inverse(targets):
     return np.clip(targets, 0, np.inf) ** 0.66
 
 
-def test_model(
-    model, train_features, train_targets, val_features, top_val_features, **fit_kwargs
-):
+def train(model, train_features, train_targets, **fit_kwargs):
     model = model.fit(train_features, transform(train_targets), **fit_kwargs)
-    return model, inverse(model.predict(val_features)), inverse(model.predict(top_val_features))
+    return model
+
+def predict(
+    model, test_features
+):
+    return inverse(model.predict(test_features))
 
 
 def get_scores(preds, targets):
@@ -127,10 +129,6 @@ def get_scores(preds, targets):
         "rmse": mean_squared_error(targets, preds) ** 0.5,
         "mae": mean_absolute_error(targets, preds),
     }
-
-
-def predict(model, features):
-    return model.predict(features)
 
 
 class GKModel:
