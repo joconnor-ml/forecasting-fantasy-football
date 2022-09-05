@@ -78,7 +78,7 @@ def train_filter(df, targets):
 
 
 def inference_filter(df):
-    (
+    return (
         (df["GW"] == 5)
         & (df["season"] == "2022-23")
     )
