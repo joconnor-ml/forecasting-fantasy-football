@@ -11,10 +11,42 @@ def main(position: str, horizon: int, output_path: str):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
     df = df[df["position"] == position]
 
-    targets = total_points.get_targets(df, horizon=horizon)
-    features = total_points.generate_features(df, horizon=horizon)
+    all_scores = []
+    for model_name, model in total_points.get_models(position, horizon).items():
+        targets = model.get_targets(df, horizon=horizon)
+        features = model.generate_features(df, horizon=horizon)
 
-    train_filter = total_points.train_filter(df, targets)
+        train_filter = model.train_filter(df, targets)
+        df = df[train_filter]
+        targets = targets[train_filter]
+        features = features[train_filter]
+
+        (
+            train_features,
+            val_features,
+            top_val_features,
+            train_targets,
+            val_targets,
+            top_val_targets,
+        ) = model.train_test_split(df, features, targets)
+
+        ## benchmark:
+        benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
+        model.get_scores(benchmark_pred, val_targets)
+        model = model.train(model, train_features, train_targets)
+        preds = model.predict(model, val_features)
+        top_preds = model.predict(model, top_val_features)
+        scores = model.get_scores(val_targets, preds)
+        top_scores = model.get_scores(top_val_targets, top_preds)
+        all_scores.append({"model": model_name, **top_scores})
+
+    all_scores = pd.DataFrame(all_scores).sort_values("rmse")
+    best_model_name = all_scores.iloc[0]["model"]
+    best_model = total_points.get_models(position, horizon)[best_model_name]
+    targets = best_model.get_targets(df, horizon=horizon)
+    features = best_model.generate_features(df, horizon=horizon)
+
+    train_filter = best_model.train_filter(df, targets)
     df = df[train_filter]
     targets = targets[train_filter]
     features = features[train_filter]
@@ -26,32 +58,15 @@ def main(position: str, horizon: int, output_path: str):
         train_targets,
         val_targets,
         top_val_targets,
-    ) = total_points.train_test_split(df, features, targets)
+    ) = best_model.train_test_split(df, features, targets)
 
-    ## benchmark:
-    benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
-    total_points.get_scores(benchmark_pred, val_targets)
-
-    all_scores = []
-    for model_name, model in total_points.get_models().items():
-        model = total_points.train(
-            model, train_features, train_targets
-        )
-        preds = total_points.predict(model, val_features)
-        top_preds = total_points.predict(model, top_val_features)
-        scores = total_points.get_scores(val_targets, preds)
-        top_scores = total_points.get_scores(top_val_targets, top_preds)
-        all_scores.append({"model": model_name, **top_scores})
-
-    all_scores = pd.DataFrame(all_scores).sort_values("rmse")
-    best_model_name = all_scores.iloc[0]["model"]
-    best_model = total_points.get_models()[best_model_name]
-    best_model = total_points.train(
-        best_model, pd.concat([train_features, val_features]), pd.concat([train_targets, val_targets])
+    best_model = best_model.train(
+        pd.concat([train_features, val_features]),
+        pd.concat([train_targets, val_targets]),
     )
 
-    test_features = features[total_points.inference_filter(df)]
-    final_preds = total_points.predict(best_model, test_features)
+    test_features = features[best_model.inference_filter(df)]
+    final_preds = best_model.predict(test_features)
     final_preds.to_csv(path=pathlib.Path(output_path) / position / f"{horizon}.csv")
 
 
