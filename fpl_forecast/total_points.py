@@ -26,20 +26,22 @@ def get_models(position, horizon):
     return {
         **{
             f"lasso_{alpha}": model_class(
-                make_pipeline(SimpleImputer(), StandardScaler(), Lasso(alpha=alpha)),
-                horizon,
+                model=make_pipeline(
+                    SimpleImputer(), StandardScaler(), Lasso(alpha=alpha)
+                ),
+                horizon=horizon,
             )
             for alpha in [0.1, 1, 10, 100]
         },
         **{
             f"lasso_poly_{alpha}": model_class(
-                make_pipeline(
+                model=make_pipeline(
                     SimpleImputer(),
                     PolynomialFeatures(),
                     StandardScaler(),
                     Lasso(alpha=alpha),
                 ),
-                horizon,
+                horizon=horizon,
             )
             for alpha in [0.1, 1, 10]
         },
@@ -47,7 +49,7 @@ def get_models(position, horizon):
 
 
 class PointsModel:
-    def __init__(self, horizon, model):
+    def __init__(self, model, horizon):
         self.model = model
         self.horizon = horizon
 
