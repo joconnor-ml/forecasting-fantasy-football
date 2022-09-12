@@ -13,8 +13,8 @@ def main(position: str, horizon: int, output_path: str):
 
     all_scores = []
     for model_name, model in total_points.get_models(position, horizon).items():
-        targets = model.get_targets(df, horizon=horizon)
-        features = model.generate_features(df, horizon=horizon)
+        targets = model.get_targets(df)
+        features = model.generate_features(df)
 
         train_filter = model.train_filter(df, targets)
         df = df[train_filter]
@@ -43,8 +43,8 @@ def main(position: str, horizon: int, output_path: str):
     all_scores = pd.DataFrame(all_scores).sort_values("rmse")
     best_model_name = all_scores.iloc[0]["model"]
     best_model = total_points.get_models(position, horizon)[best_model_name]
-    targets = best_model.get_targets(df, horizon=horizon)
-    features = best_model.generate_features(df, horizon=horizon)
+    targets = best_model.get_targets(df)
+    features = best_model.generate_features(df)
 
     train_filter = best_model.train_filter(df, targets)
     df = df[train_filter]
