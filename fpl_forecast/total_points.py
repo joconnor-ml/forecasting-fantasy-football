@@ -124,7 +124,7 @@ class PointsModel:
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"])
+                utils.generate_targets(df, self.horizon, ["was_home"]).fillna(False)
                 .astype("Int32")
                 .astype(float),
                 utils.generate_targets(df, self.horizon, ["total_difficulty"]),
