@@ -33,9 +33,9 @@ def main(position: str, horizon: int, output_path: str):
         ## benchmark:
         benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
         model.get_scores(benchmark_pred, val_targets)
-        model = model.train(model, train_features, train_targets)
-        preds = model.predict(model, val_features)
-        top_preds = model.predict(model, top_val_features)
+        model = model.train(train_features, train_targets)
+        preds = model.predict(val_features)
+        top_preds = model.predict(top_val_features)
         scores = model.get_scores(val_targets, preds)
         top_scores = model.get_scores(top_val_targets, top_preds)
         all_scores.append({"model": model_name, **top_scores})
