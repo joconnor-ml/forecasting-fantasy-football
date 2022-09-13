@@ -7,7 +7,7 @@ from fpl_forecast import total_points
 from fpl_forecast import utils as forecast_utils
 
 
-def main(position: str, horizon: int, output_path: str):
+def main(position: str, horizon: int):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
     df = df[(df["position"] == position) & (df["minutes"] > 0)]
 
@@ -62,9 +62,7 @@ def main(position: str, horizon: int, output_path: str):
     test_features = features[inference_filter]
     out_df = df.loc[inference_filter, ["name", "team", "position", "value", "value_rank", "minutes", "total_points"]]
     out_df["score_pred"] = best_model.predict(test_features)
-    output_path = pathlib.Path(output_path) / position / f"{horizon}.csv"
-    output_path.mkdir(parents=True, exist_ok=True)
-    out_df.to_csv()
+    return out_df
 
 
 if __name__ == "__main__":
@@ -73,4 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("--horizon", type=int, required=True)
     parser.add_argument("--outdir", type=str, required=True)
     args = parser.parse_args()
-    main(args.position, args.horizon, args.outdir)
+    out_df = main(args.position, args.horizon)
+    output_path = pathlib.Path(args.outdir) / args.position / f"{args.horizon}.csv"
+    output_path.mkdir(parents=True, exist_ok=True)
+    out_df.to_csv(output_path)

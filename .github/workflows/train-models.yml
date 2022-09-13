@@ -20,20 +20,12 @@ jobs:
         pip install -r requirements.txt
     - name: Train models
       run: |
-        python -m scripts.train_points_model --horizon 1 --position GK --outdir ./models
-        python -m scripts.train_points_model --horizon 1 --position DEF --outdir ./models
-        python -m scripts.train_points_model --horizon 1 --position MID --outdir ./models
-        python -m scripts.train_points_model --horizon 1 --position FWD --outdir ./models
-        python -m scripts.train_points_model --horizon 2 --position GK --outdir ./models
-        python -m scripts.train_points_model --horizon 2 --position DEF --outdir ./models
-        python -m scripts.train_points_model --horizon 2 --position MID --outdir ./models
-        python -m scripts.train_points_model --horizon 2 --position FWD --outdir ./models
-        tar -czvf models.tar.gz ./models
+        python -m scripts.train_all --horizon 4 --outfile preds.csv
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
       with:
-        name: models
-        path: models.tar.gz
+        name: preds
+        path: preds.csv
         retention-days: 30
 
 
