@@ -62,7 +62,9 @@ def main(position: str, horizon: int, output_path: str):
     test_features = features[inference_filter]
     out_df = df.loc[inference_filter, ["name", "team", "position", "value", "value_rank", "minutes", "total_points"]]
     out_df["score_pred"] = best_model.predict(test_features)
-    out_df.to_csv(pathlib.Path(output_path) / position / f"{horizon}.csv")
+    output_path = pathlib.Path(output_path) / position / f"{horizon}.csv"
+    output_path.mkdir(parents=True, exist_ok=True)
+    out_df.to_csv()
 
 
 if __name__ == "__main__":
