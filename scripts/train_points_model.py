@@ -9,17 +9,13 @@ from fpl_forecast import utils as forecast_utils
 
 def main(position: str, horizon: int, output_path: str):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
-    df = df[(df["position"] == position) & df["minutes"] > 0]
+    df = df[(df["position"] == position) & (df["minutes"] > 0)]
 
     all_scores = []
     for model_name, model in total_points.get_models(position, horizon).items():
         targets = model.get_targets(df)
         features = model.generate_features(df)
         train_filter = model.train_filter(df, targets)
-        train_df = df[train_filter]
-
-        targets = targets[train_filter]
-        features = features[train_filter]
 
         (
             train_features,
@@ -28,7 +24,7 @@ def main(position: str, horizon: int, output_path: str):
             train_targets,
             val_targets,
             top_val_targets,
-        ) = model.train_test_split(train_df, features, targets)
+        ) = model.train_test_split(df[train_filter], features[train_filter], targets[train_filter])
 
         ## benchmark:
         benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
@@ -47,9 +43,6 @@ def main(position: str, horizon: int, output_path: str):
     features = best_model.generate_features(df)
 
     train_filter = best_model.train_filter(df, targets)
-    train_df = df[train_filter]
-    targets = targets[train_filter]
-    features = features[train_filter]
 
     (
         train_features,
@@ -58,14 +51,14 @@ def main(position: str, horizon: int, output_path: str):
         train_targets,
         val_targets,
         top_val_targets,
-    ) = best_model.train_test_split(train_df, features, targets)
+    ) = best_model.train_test_split(df[train_filter], features[train_filter], targets[train_filter])
 
     best_model = best_model.train(
         pd.concat([train_features, val_features]),
         pd.concat([train_targets, val_targets]),
     )
 
-    test_features = features[best_model.inference_filter(df)]
+    test_features = features[best_model.inference_filter(df, targets)]
     final_preds = best_model.predict(test_features)
     final_preds.to_csv(path=pathlib.Path(output_path) / position / f"{horizon}.csv")
 
