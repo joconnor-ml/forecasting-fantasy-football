@@ -24,7 +24,9 @@ def main(position: str, horizon: int):
             train_targets,
             val_targets,
             top_val_targets,
-        ) = model.train_test_split(df[train_filter], features[train_filter], targets[train_filter])
+        ) = model.train_test_split(
+            df[train_filter], features[train_filter], targets[train_filter]
+        )
 
         ## benchmark:
         benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
@@ -51,7 +53,9 @@ def main(position: str, horizon: int):
         train_targets,
         val_targets,
         top_val_targets,
-    ) = best_model.train_test_split(df[train_filter], features[train_filter], targets[train_filter])
+    ) = best_model.train_test_split(
+        df[train_filter], features[train_filter], targets[train_filter]
+    )
 
     best_model = best_model.train(
         pd.concat([train_features, val_features]),
@@ -60,7 +64,10 @@ def main(position: str, horizon: int):
 
     inference_filter = best_model.inference_filter(df, targets)
     test_features = features[inference_filter]
-    out_df = df.loc[inference_filter, ["name", "team", "position", "value", "value_rank", "minutes", "total_points"]]
+    out_df = df.loc[
+        inference_filter,
+        ["name", "team", "position", "value", "value_rank", "minutes", "total_points"],
+    ]
     out_df["score_pred"] = best_model.predict(test_features)
     return out_df
 

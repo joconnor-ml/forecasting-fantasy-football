@@ -67,10 +67,7 @@ class PointsModel:
         )
 
     def train_filter(self, df, targets):
-        return (
-            targets["total_points"].notnull()
-            & (df["selected_by_percent"] > 1)
-        )
+        return targets["total_points"].notnull() & (df["selected_by_percent"] > 1)
 
     def inference_filter(self, df, targets):
         # TODO automate getting the inference week
@@ -123,7 +120,8 @@ class PointsModel:
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"]).fillna(False)
+                utils.generate_targets(df, self.horizon, ["was_home"])
+                .fillna(False)
                 .astype("Int32")
                 .astype(float),
                 utils.generate_targets(df, self.horizon, ["total_difficulty"]),
@@ -146,7 +144,8 @@ class GKModel(PointsModel):
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"]).fillna(False)
+                utils.generate_targets(df, self.horizon, ["was_home"])
+                .fillna(False)
                 .astype("Int32")
                 .astype(float),
                 utils.generate_targets(df, self.horizon, ["total_difficulty"]),
