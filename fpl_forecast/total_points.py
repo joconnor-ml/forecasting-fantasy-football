@@ -75,7 +75,7 @@ class PointsModel:
 
     def inference_filter(self, df):
         # TODO automate getting the inference week
-        return (df["GW"] == 7) & (df["season"] == "2022-23")
+        return (df["GW"] == 6) & (df["season"] == "2022-23")
 
     def train_test_split(self, df, features, targets):
         # predicting scores conditioned on player appearing
