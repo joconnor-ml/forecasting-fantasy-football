@@ -58,9 +58,11 @@ def main(position: str, horizon: int, output_path: str):
         pd.concat([train_targets, val_targets]),
     )
 
-    test_features = features[best_model.inference_filter(df, targets)]
-    final_preds = best_model.predict(test_features)
-    final_preds.to_csv(path=pathlib.Path(output_path) / position / f"{horizon}.csv")
+    inference_filter = best_model.inference_filter(df, targets)
+    test_features = features[inference_filter]
+    out_df = df.loc[inference_filter, ["name", "team", "position", "value", "value_rank", "minutes", "total_points"]]
+    out_df["score_pred"] = best_model.predict(test_features)
+    out_df.to_csv(path=pathlib.Path(output_path) / position / f"{horizon}.csv")
 
 
 if __name__ == "__main__":
