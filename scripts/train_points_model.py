@@ -13,9 +13,10 @@ def main(position: str, horizon: int, output_path: str):
 
     all_scores = []
     for model_name, model in total_points.get_models(position, horizon).items():
-        train_filter = model.train_filter(df, targets)
         targets = model.get_targets(df)
         features = model.generate_features(df)
+        train_filter = model.train_filter(df, targets)
+        train_df = df[train_filter]
 
         targets = targets[train_filter]
         features = features[train_filter]
@@ -27,7 +28,7 @@ def main(position: str, horizon: int, output_path: str):
             train_targets,
             val_targets,
             top_val_targets,
-        ) = model.train_test_split(df, features, targets)
+        ) = model.train_test_split(train_df, features, targets)
 
         ## benchmark:
         benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
@@ -46,7 +47,7 @@ def main(position: str, horizon: int, output_path: str):
     features = best_model.generate_features(df)
 
     train_filter = best_model.train_filter(df, targets)
-    df = df[train_filter]
+    train_df = df[train_filter]
     targets = targets[train_filter]
     features = features[train_filter]
 
@@ -57,7 +58,7 @@ def main(position: str, horizon: int, output_path: str):
         train_targets,
         val_targets,
         top_val_targets,
-    ) = best_model.train_test_split(df, features, targets)
+    ) = best_model.train_test_split(train_df, features, targets)
 
     best_model = best_model.train(
         pd.concat([train_features, val_features]),
