@@ -136,7 +136,7 @@ def get_fixture_df(seasons):
                     "team_a_difficulty": "opposition_difficulty",
                     "team_a_score": "opposition_score",
                 }
-            ).assign(was_home=1),
+            ).assign(was_home=True),
             fixtures.rename(
                 columns={
                     "team_a": "team",
@@ -146,7 +146,7 @@ def get_fixture_df(seasons):
                     "team_h_difficulty": "opposition_difficulty",
                     "team_h_score": "opposition_score",
                 }
-            ).assign(was_home=0),
+            ).assign(was_home=False),
         ]
     ).reset_index()
     fixtures["margin"] = fixtures["score"] - fixtures["opposition_score"]

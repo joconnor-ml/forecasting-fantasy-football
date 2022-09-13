@@ -148,7 +148,6 @@ class GKModel(PointsModel):
         return pd.concat(
             [
                 utils.generate_targets(df, self.horizon, ["was_home"]).fillna(False)
-                .fillna(True)
                 .astype("Int32")
                 .astype(float),
                 utils.generate_targets(df, self.horizon, ["total_difficulty"]),
