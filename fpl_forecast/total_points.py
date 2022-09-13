@@ -70,12 +70,11 @@ class PointsModel:
         return (
             targets["total_points"].notnull()
             & (df["selected_by_percent"] > 1)
-            & (df["minutes"] > 0)
         )
 
-    def inference_filter(self, df):
+    def inference_filter(self, df, targets):
         # TODO automate getting the inference week
-        return (df["GW"] == 6) & (df["season"] == "2022-23")
+        return targets["total_points"].isnull()
 
     def train_test_split(self, df, features, targets):
         # predicting scores conditioned on player appearing

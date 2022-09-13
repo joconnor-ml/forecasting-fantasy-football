@@ -9,15 +9,14 @@ from fpl_forecast import utils as forecast_utils
 
 def main(position: str, horizon: int, output_path: str):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
-    df = df[df["position"] == position]
+    df = df[(df["position"] == position) & df["minutes"] > 0]
 
     all_scores = []
     for model_name, model in total_points.get_models(position, horizon).items():
+        train_filter = model.train_filter(df, targets)
         targets = model.get_targets(df)
         features = model.generate_features(df)
 
-        train_filter = model.train_filter(df, targets)
-        df = df[train_filter]
         targets = targets[train_filter]
         features = features[train_filter]
 
@@ -47,7 +46,7 @@ def main(position: str, horizon: int, output_path: str):
     features = best_model.generate_features(df)
 
     train_filter = best_model.train_filter(df, targets)
-    train_df = df[train_filter]
+    df = df[train_filter]
     targets = targets[train_filter]
     features = features[train_filter]
 
@@ -58,7 +57,7 @@ def main(position: str, horizon: int, output_path: str):
         train_targets,
         val_targets,
         top_val_targets,
-    ) = best_model.train_test_split(train_df, features, targets)
+    ) = best_model.train_test_split(df, features, targets)
 
     best_model = best_model.train(
         pd.concat([train_features, val_features]),

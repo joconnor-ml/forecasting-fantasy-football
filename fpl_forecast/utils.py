@@ -94,7 +94,7 @@ def get_player_data(seasons):
         )
         for i in range(next_gw, fixture_df.event.max())
     )
-    df = pd.concat([df, future_players]).reset_index()
+    df = pd.concat([df, future_players.assign(minutes=90)]).reset_index()
 
     return df
 
