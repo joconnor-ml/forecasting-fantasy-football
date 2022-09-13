@@ -71,7 +71,7 @@ class PointsModel:
 
     def inference_filter(self, df, targets):
         # TODO automate getting the inference week
-        return targets["total_points"].isnull()
+        return df["total_points"].notnull() & targets["total_points"].isnull()
 
     def train_test_split(self, df, features, targets):
         # predicting scores conditioned on player appearing
