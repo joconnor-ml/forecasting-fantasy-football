@@ -10,7 +10,17 @@ from fpl_forecast import utils as forecast_utils
 
 def main(position: str, horizon: int):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
-    df = df[(df["position"] == position) & (df["minutes"] > 0)]
+    df = df[
+        ((df["position"] == position) & (df["minutes"] > 0))
+        | (df["season"] == forecast_utils.SEASONS[-1])
+        & (
+            df["GW"]
+            == df[
+                (df["season"] == forecast_utils.SEASONS[-1])
+                & df["total_points"].notnull()
+            ]["GW"].max()
+        )
+    ]
 
     all_scores = []
     for model_name, model in total_points.get_models(position, horizon).items():
