@@ -1,4 +1,4 @@
-import pandas as pd
+import numpy as np
 
 from fpl_forecast import total_points, playing_chance
 from fpl_forecast import utils as forecast_utils
@@ -24,7 +24,7 @@ def main():
             ) = module.train_test_split(grp, features, targets)
 
             ## benchmark:
-            benchmark_pred = pd.np.ones_like(val_targets) * val_targets.mean()
+            benchmark_pred = np.ones_like(val_targets) * val_targets.mean()
             module.get_scores(benchmark_pred, val_targets)
 
             for model in module.get_models():

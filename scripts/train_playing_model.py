@@ -4,16 +4,15 @@ import pathlib
 import numpy as np
 import pandas as pd
 
-from fpl_forecast import total_points
+from fpl_forecast import playing_chance
 from fpl_forecast import utils as forecast_utils
 
 
 def main(position: str, horizon: int):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
-    df = df[(df["position"] == position) & (df["minutes"] > 0)]
 
     all_scores = []
-    for model_name, model in total_points.get_models(position, horizon).items():
+    for model_name, model in playing_chance.get_models(position, horizon).items():
         targets = model.get_targets(df)
         features = model.generate_features(df)
         train_filter = model.train_filter(df, targets)
@@ -39,9 +38,9 @@ def main(position: str, horizon: int):
         top_scores = model.get_scores(top_val_targets, top_preds)
         all_scores.append({"model": model_name, **top_scores})
 
-    all_scores = pd.DataFrame(all_scores).sort_values("rmse")
-    best_model_name = all_scores.iloc[0]["model"]
-    best_model = total_points.get_models(position, horizon)[best_model_name]
+    all_scores = pd.DataFrame(all_scores).sort_values("log_loss")
+    best_model_name = all_scores.iloc[-1]["model"]
+    best_model = playing_chance.get_models(position, horizon)[best_model_name]
     targets = best_model.get_targets(df)
     features = best_model.generate_features(df)
 
@@ -69,7 +68,7 @@ def main(position: str, horizon: int):
         inference_filter,
         ["name", "team", "position", "value", "value_rank", "minutes", "total_points"],
     ]
-    out_df["score_pred"] = best_model.predict(test_features)
+    out_df["playing_chance"] = best_model.predict(test_features)
     return out_df
 
 
@@ -80,6 +79,6 @@ if __name__ == "__main__":
     parser.add_argument("--outdir", type=str, required=True)
     args = parser.parse_args()
     out_df = main(args.position, args.horizon)
-    output_path = pathlib.Path(args.outdir) / args.position / f"points_{args.horizon}.csv"
+    output_path = pathlib.Path(args.outdir) / args.position / f"playing_chance_{args.horizon}.csv"
     output_path.mkdir(parents=True, exist_ok=True)
     out_df.to_csv(output_path)
