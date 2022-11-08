@@ -20,7 +20,7 @@ jobs:
         pip install -r requirements.txt
     - name: Train points models
       run: |
-        python -m scripts.train_all_points --horizon 4 --outfile points.csv
+        python -m scripts.train_all_points --horizon 4 --outfile points.csv --score_path points_scores.csv
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
@@ -29,13 +29,27 @@ jobs:
         path: points.csv
         retention-days: 30
 
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: points_scores
+        path: points_scores.csv
+        retention-days: 30
+
     - name: Train playing models
       run: |
-        python -m scripts.train_all_playing --horizon 4 --outfile playing.csv
+        python -m scripts.train_all_playing --horizon 4 --outfile playing.csv --score_path playing_scores.csv
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
       with:
         name: playing
         path: playing.csv
+        retention-days: 30
+
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: playing_scores
+        path: playing_scores.csv
         retention-days: 30

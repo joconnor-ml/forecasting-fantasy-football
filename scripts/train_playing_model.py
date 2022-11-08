@@ -69,7 +69,7 @@ def main(position: str, horizon: int):
         ["name", "team", "position", "value", "value_rank", "minutes", "total_points"],
     ]
     out_df["playing_chance"] = best_model.predict(test_features)
-    return out_df
+    return out_df, all_scores
 
 
 if __name__ == "__main__":
