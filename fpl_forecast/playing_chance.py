@@ -98,7 +98,7 @@ class PlayingChanceModel:
     def predict(self, test_features):
         return self.model.predict_proba(test_features)[:, -1]
 
-    def get_scores(self, preds, targets):
+    def get_scores(self, targets, preds):
         return {
             "log_loss": log_loss(targets, preds),
             "roc_auc": roc_auc_score(targets, preds),

@@ -111,7 +111,7 @@ class PointsModel:
     def predict(self, test_features):
         return self.inverse(self.model.predict(test_features))
 
-    def get_scores(self, preds, targets):
+    def get_scores(self, targets, preds):
         return {
             "rmse": mean_squared_error(targets, preds) ** 0.5,
             "mae": mean_absolute_error(targets, preds),
