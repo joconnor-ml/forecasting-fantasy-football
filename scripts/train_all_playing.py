@@ -8,14 +8,12 @@ from . import train_playing_model
 def main(max_horizon, output_path, scores_path):
     all_preds = []
     all_scores = []
-    for position in ["GK", "DEF", "MID", "FWD"]:
-        for horizon in range(1, max_horizon + 1):
-            pred_df, score_df = train_playing_model.main(position, horizon)
-            pred_df["horizon"] = horizon
-            score_df["horizon"] = horizon
-            score_df["position"] = position
-            all_preds.append(pred_df)
-            all_scores.append(score_df)
+    for horizon in range(1, max_horizon + 1):
+        pred_df, score_df = train_playing_model.main(horizon)
+        pred_df["horizon"] = horizon
+        score_df["horizon"] = horizon
+        all_preds.append(pred_df)
+        all_scores.append(score_df)
     pd.concat(all_preds).to_csv(output_path)
     pd.concat(all_scores).to_csv(scores_path)
 

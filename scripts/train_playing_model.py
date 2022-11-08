@@ -8,11 +8,11 @@ from fpl_forecast import playing_chance
 from fpl_forecast import utils as forecast_utils
 
 
-def main(position: str, horizon: int):
+def main(horizon: int):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
 
     all_scores = []
-    for model_name, model in playing_chance.get_models(position, horizon).items():
+    for model_name, model in playing_chance.get_models(horizon).items():
         targets = model.get_targets(df)
         features = model.generate_features(df)
         train_filter = model.train_filter(df, targets)
@@ -40,7 +40,7 @@ def main(position: str, horizon: int):
 
     all_scores = pd.DataFrame(all_scores).sort_values("log_loss")
     best_model_name = all_scores.iloc[-1]["model"]
-    best_model = playing_chance.get_models(position, horizon)[best_model_name]
+    best_model = playing_chance.get_models(horizon)[best_model_name]
     targets = best_model.get_targets(df)
     features = best_model.generate_features(df)
 
@@ -74,13 +74,12 @@ def main(position: str, horizon: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--position", type=str, required=True)
     parser.add_argument("--horizon", type=int, required=True)
     parser.add_argument("--outdir", type=str, required=True)
     args = parser.parse_args()
-    out_df = main(args.position, args.horizon)
+    out_df = main(args.horizon)
     output_path = (
-        pathlib.Path(args.outdir) / args.position / f"playing_chance_{args.horizon}.csv"
+        pathlib.Path(args.outdir) / f"playing_chance_{args.horizon}.csv"
     )
     output_path.mkdir(parents=True, exist_ok=True)
     out_df.to_csv(output_path)

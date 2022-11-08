@@ -14,7 +14,7 @@ from . import utils
 TARGET_COL = "played"
 
 
-def get_models(position, horizon):
+def get_models(horizon):
     model_class = PlayingChanceModel
     return {
         **{
