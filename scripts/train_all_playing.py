@@ -13,6 +13,7 @@ def main(max_horizon, output_path, scores_path):
             pred_df, score_df = train_playing_model.main(position, horizon)
             pred_df["horizon"] = horizon
             score_df["horizon"] = horizon
+            score_df["position"] = position
             all_preds.append(pred_df)
             all_scores.append(score_df)
     pd.concat(all_preds).to_csv(output_path)
