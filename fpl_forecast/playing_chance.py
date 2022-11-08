@@ -55,17 +55,24 @@ class PlayingChanceModel:
         joblib.dump(self.model, p / "model.joblib")
 
     def get_targets(self, df):
-        return utils.generate_targets(
-            df, self.horizon, ["played"]
-        )
+        return utils.generate_targets(df, self.horizon, ["played"])
 
     def train_filter(self, df, targets):
         return targets["played"].notnull() & (df["selected_by_percent"] > 1)
 
     def inference_filter(self, df, targets):
         # TODO automate getting the inference week
-        return df["total_points"].notnull() & (df["season"] == utils.SEASONS[-1]) & (df["GW"] == df[(df["season"] == utils.SEASONS[-1]) & df["total_points"].notnull()]["GW"].max())
-    
+        return (
+            df["total_points"].notnull()
+            & (df["season"] == utils.SEASONS[-1])
+            & (
+                df["GW"]
+                == df[
+                    (df["season"] == utils.SEASONS[-1]) & df["total_points"].notnull()
+                ]["GW"].max()
+            )
+        )
+
     def train_test_split(self, df, features, targets):
         # predicting scores conditioned on player appearing
         train_filter = df["season"].isin(utils.SEASONS[:-2])
@@ -90,9 +97,7 @@ class PlayingChanceModel:
         )
 
     def train(self, train_features, train_targets, **fit_kwargs):
-        self.model = self.model.fit(
-            train_features, train_targets, **fit_kwargs
-        )
+        self.model = self.model.fit(train_features, train_targets, **fit_kwargs)
         return self
 
     def predict(self, test_features):
@@ -109,7 +114,10 @@ class PlayingChanceModel:
         return pd.concat(
             [
                 utils.generate_rolling_features(
-                    df, ["minutes", "total_points", "xP"], windows=(3, 10), aggs=("mean",)
+                    df,
+                    ["minutes", "total_points", "xP"],
+                    windows=(3, 10),
+                    aggs=("mean",),
                 ),
                 utils.generate_lag_features(
                     df, ["minutes", "total_points"], lags=(0, 1, 2)

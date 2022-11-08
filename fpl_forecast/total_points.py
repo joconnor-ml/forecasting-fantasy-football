@@ -71,8 +71,17 @@ class PointsModel:
 
     def inference_filter(self, df, targets):
         # TODO automate getting the inference week
-        return df["total_points"].notnull() & (df["season"] == utils.SEASONS[-1]) & (df["GW"] == df[(df["season"] == utils.SEASONS[-1]) & df["total_points"].notnull()]["GW"].max())
-    
+        return (
+            df["total_points"].notnull()
+            & (df["season"] == utils.SEASONS[-1])
+            & (
+                df["GW"]
+                == df[
+                    (df["season"] == utils.SEASONS[-1]) & df["total_points"].notnull()
+                ]["GW"].max()
+            )
+        )
+
     def train_test_split(self, df, features, targets):
         # predicting scores conditioned on player appearing
         train_filter = df["season"].isin(utils.SEASONS[:-2])

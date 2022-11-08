@@ -31,7 +31,7 @@ def main(position: str, horizon: int):
 
         ## benchmark:
         benchmark_pred = np.ones_like(val_targets) * val_targets.mean()
-        benchmark_scores = model.get_scoresval_targets, (benchmark_pred)
+        benchmark_scores = model.get_scores(val_targets, benchmark_pred)
         model = model.train(train_features, train_targets)
         preds = model.predict(val_features)
         top_preds = model.predict(top_val_features)
@@ -80,6 +80,8 @@ if __name__ == "__main__":
     parser.add_argument("--outdir", type=str, required=True)
     args = parser.parse_args()
     out_df = main(args.position, args.horizon)
-    output_path = pathlib.Path(args.outdir) / args.position / f"points_{args.horizon}.csv"
+    output_path = (
+        pathlib.Path(args.outdir) / args.position / f"points_{args.horizon}.csv"
+    )
     output_path.mkdir(parents=True, exist_ok=True)
     out_df.to_csv(output_path)
