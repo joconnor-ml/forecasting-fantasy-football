@@ -106,6 +106,7 @@ def get_player_data(seasons):
                 for season in seasons
             ]
         )
+        .rename(columns={"round": "GW"})
         .sort_values(["season", "GW"])
         .reset_index(drop=True)
     )
