@@ -1,8 +1,14 @@
 name: Model Training
 
 on:
-  push
-
+  push:
+    branches:
+      - master
+  schedule:
+    # Runs at 5:09 every day
+    - cron: '9 5 * * *'
+    branches:
+      - main
 jobs:
   build:
 
