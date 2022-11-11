@@ -73,7 +73,7 @@ def get_gw_data(season):
         try:
             df = pd.read_csv(
                 f"https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data/{season}/gws/gw{i}.csv",
-                usecols=GW_COLS,
+                usecols=lambda x: x in GW_COLS,
             )
             dfs.append(df)
         except Exception as e:
