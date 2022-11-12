@@ -43,46 +43,14 @@ jobs:
       run: |
         echo "hello" > hello.txt
 
+    - name: Train points models
+      run: |
+        mkdir prod
+        python -m scripts.train_all_points --horizon 4 --outfile prod/points.csv --score_path prod/points_scores.csv
+        python -m scripts.train_all_playing --horizon 4 --outfile prod/playing.csv --score_path prod/playing_scores.csv
+
     - id: 'upload-file'
       uses: 'google-github-actions/upload-cloud-storage@v0'
       with:
-        path: 'hello.txt'
-        destination: 'forecasting-fantasy-football/hello.txt'
-
-    - name: Train points models
-      run: |
-        python -m scripts.train_all_points --horizon 4 --outfile points.csv --score_path points_scores.csv
-        gsutil cp points.csv points_scores.csv gs://forecasting-fantasy-football/
-
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: points
-        path: points.csv
-        retention-days: 30
-
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: points_scores
-        path: points_scores.csv
-        retention-days: 30
-
-    - name: Train playing models
-      run: |
-        python -m scripts.train_all_playing --horizon 4 --outfile playing.csv --score_path playing_scores.csv
-        gsutil cp playing.csv playing_scores.csv gs://forecasting-fantasy-football/playing_scores.csv
-
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: playing
-        path: playing.csv
-        retention-days: 30
-
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v3
-      with:
-        name: playing_scores
-        path: playing_scores.csv
-        retention-days: 30
+        path: 'prod'
+        destination: 'forecasting-fantasy-football'
