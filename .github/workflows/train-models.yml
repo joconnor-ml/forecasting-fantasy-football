@@ -34,6 +34,10 @@ jobs:
       with:
         workload_identity_provider: 'https://iam.googleapis.com/projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
         service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
+        token_format: "access_token"
+        create_credentials_file: true
+        activate_credentials_file: true
+        access_token_lifetime: '600s'
 
     - name: Test auth
       run: |
