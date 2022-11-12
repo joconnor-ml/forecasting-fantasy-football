@@ -39,6 +39,9 @@ jobs:
         activate_credentials_file: true
         access_token_lifetime: '600s'
 
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
     - name: Test auth
       run: |
         gcloud config list account --format "value(core.account)"
