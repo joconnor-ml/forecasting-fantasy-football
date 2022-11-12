@@ -33,7 +33,7 @@ jobs:
       uses: google-github-actions/auth@v0.4.0
       with:
         workload_identity_provider: 'projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-        service_account: 'github-actions@my-project.iam.gserviceaccount.com'
+        service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
 
     - name: Train points models
       run: |
