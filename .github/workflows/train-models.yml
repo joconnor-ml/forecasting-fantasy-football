@@ -39,12 +39,15 @@ jobs:
         activate_credentials_file: true
         access_token_lifetime: '600s'
 
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-
     - name: Test auth
       run: |
-        gcloud config list account --format "value(core.account)"
+        echo "hello" > hello.txt
+
+    - id: 'upload-file'
+      uses: 'google-github-actions/upload-cloud-storage@v0'
+      with:
+        path: 'hello.txt'
+        destination: 'forecasting-fantasy-football/hello.txt'
 
     - name: Train points models
       run: |
