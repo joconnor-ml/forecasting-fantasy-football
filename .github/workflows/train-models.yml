@@ -32,12 +32,15 @@ jobs:
     - id: auth
       uses: google-github-actions/auth@v0.4.0
       with:
-        workload_identity_provider: 'projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        workload_identity_provider: 'https://iam.googleapis.com/projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
         service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
+
+    - name: Test auth
+      run: |
+        gcloud config list account --format "value(core.account)"
 
     - name: Train points models
       run: |
-        gcloud config list account --format "value(core.account)"
         python -m scripts.train_all_points --horizon 4 --outfile points.csv --score_path points_scores.csv
         gsutil cp points.csv points_scores.csv gs://forecasting-fantasy-football/
 
