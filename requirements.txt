@@ -1,3 +1,5 @@
+gcsfs
+fsspec
 loguru
 methodtools==0.4.5
 numpy==1.23.1

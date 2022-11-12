@@ -37,6 +37,7 @@ jobs:
 
     - name: Train points models
       run: |
+        gcloud config list account --format "value(core.account)"
         python -m scripts.train_all_points --horizon 4 --outfile points.csv --score_path points_scores.csv
         gsutil cp points.csv points_scores.csv gs://forecasting-fantasy-football/
 
