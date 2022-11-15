@@ -1,4 +1,4 @@
-service: streamlit-test-app
+service: forecasting-fantasy-football
 runtime: custom
 env: flex
 manual_scaling:

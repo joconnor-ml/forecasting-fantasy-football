@@ -24,4 +24,5 @@ jobs:
         service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
     - id: deploy
       uses: 'google-github-actions/deploy-appengine@v0'
-      working_directory: ./app
+      with:
+        working_directory: './app'
