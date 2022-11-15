@@ -77,7 +77,7 @@ def get_gw_data(season):
             )
             dfs.append(df)
         except Exception as e:
-            logger.exception(e)
+            logger.info(e)
             break
     return pd.concat(dfs).rename(columns={"team": "team_name"})
 
