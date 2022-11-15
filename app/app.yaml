@@ -1,4 +1,4 @@
-service: forecasting-fantasy-football
+service: default
 runtime: custom
 env: flex
 manual_scaling:
