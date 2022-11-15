@@ -22,6 +22,7 @@ jobs:
       with:
         workload_identity_provider: 'projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
         service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
+
     - id: deploy
       uses: 'google-github-actions/deploy-appengine@v0'
       with:

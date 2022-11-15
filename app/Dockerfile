@@ -4,8 +4,10 @@ FROM python:3.10.8-slim
 #Expose port 8080
 EXPOSE 8080
 
-#Optional - install git to fetch packages directly from github
-RUN apt-get update && apt-get install -y git
+# Upgrade pip and install requirements
+COPY requirements.txt requirements.txt
+RUN pip install -U pip
+RUN pip install -r requirements.txt
 
 #Copy all files in current directory into app directory
 COPY . /app
