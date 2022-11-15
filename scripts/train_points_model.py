@@ -55,9 +55,6 @@ def main(position: str, horizon: int):
     best_model = total_points.get_models(position, horizon)[best_model_name]
     targets = best_model.get_targets(df)
     features = best_model.generate_features(df)
-    pd.concat([df, features, targets], axis=1).to_csv(
-        f"gs://forecasting-fantasy-football/dev/features/{position}.{horizon}.pq"
-    )
 
     train_filter = best_model.train_filter(df, targets)
 
@@ -85,17 +82,3 @@ def main(position: str, horizon: int):
     ]
     out_df["score_pred"] = best_model.predict(test_features)
     return out_df, all_scores
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--position", type=str, required=True)
-    parser.add_argument("--horizon", type=int, required=True)
-    parser.add_argument("--outdir", type=str, required=True)
-    args = parser.parse_args()
-    out_df = main(args.position, args.horizon)
-    output_path = (
-        pathlib.Path(args.outdir) / args.position / f"points_{args.horizon}.csv"
-    )
-    output_path.mkdir(parents=True, exist_ok=True)
-    out_df.to_csv(output_path)

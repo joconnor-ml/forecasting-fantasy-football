@@ -1,22 +1,32 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: '3.10'
+        cache: "pip"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r requirements.txt -r app/requirements.txt
     - name: Test with pytest
       run: |
         pip install pytest
         pip install pytest-cov
+        python -m scripts.train_all_points --horizon 1 --outfile points.csv --score_path points_scores.csv
+        python -m scripts.train_all_playing --horizon 1 --outfile playing.csv --score_path playing_scores.csv
+
         pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
