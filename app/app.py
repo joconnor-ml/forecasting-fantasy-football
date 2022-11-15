@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 
-POINTS_DATA_PATH = "gs://forecasting-fantasy-football/prod/points.csv"
-PLAYING_DATA_PATH = "gs://forecasting-fantasy-football/prod/playing.csv"
+POINTS_DATA_PATH = "gs://forecasting-fantasy-football/prod/points.pq"
+PLAYING_DATA_PATH = "gs://forecasting-fantasy-football/prod/playing.pq"
 MAX_HORIZONS = 4
 
 

@@ -12,7 +12,7 @@ def main(position: str, horizon: int):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
     df = df[
         ((df["position"] == position) & (df["minutes"] > 0))
-        | (df["season"] == forecast_utils.SEASONS[-1])
+        | ((df["season"] == forecast_utils.SEASONS[-1])
         & (df["position"] == position)
         & (
             df["GW"]
@@ -20,7 +20,7 @@ def main(position: str, horizon: int):
                 (df["season"] == forecast_utils.SEASONS[-1])
                 & df["total_points"].notnull()
             ]["GW"].max()
-        )
+        ))
     ]
 
     all_scores = []
