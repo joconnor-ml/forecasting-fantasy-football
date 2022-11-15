@@ -56,7 +56,7 @@ def main(position: str, horizon: int):
     targets = best_model.get_targets(df)
     features = best_model.generate_features(df)
     pd.concat([df, features, targets], axis=1).to_csv(
-        f"gs//forecasting-fantasy-football/dev/features/{position}.{horizon}.pq"
+        f"gs://forecasting-fantasy-football/dev/features/{position}.{horizon}.pq"
     )
 
     train_filter = best_model.train_filter(df, targets)
