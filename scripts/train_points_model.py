@@ -12,7 +12,8 @@ def main(position: str, horizon: int):
     df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
     df = df[
         ((df["position"] == position) & (df["minutes"] > 0))
-        | (df["season"] == forecast_utils.SEASONS[-1]) & (df["position"] == position)
+        | (df["season"] == forecast_utils.SEASONS[-1])
+        & (df["position"] == position)
         & (
             df["GW"]
             == df[
@@ -54,6 +55,9 @@ def main(position: str, horizon: int):
     best_model = total_points.get_models(position, horizon)[best_model_name]
     targets = best_model.get_targets(df)
     features = best_model.generate_features(df)
+    pd.concat([df, features, targets], axis=1).to_csv(
+        f"gs//forecasting-fantasy-football/dev/features/{position}.{horizon}.pq"
+    )
 
     train_filter = best_model.train_filter(df, targets)
 

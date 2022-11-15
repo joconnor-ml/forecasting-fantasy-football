@@ -1,4 +1,4 @@
-name: Model Training
+name: Deploy to App Engine
 
 on:
   push:

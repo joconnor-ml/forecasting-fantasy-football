@@ -29,6 +29,7 @@ def get_forecast_data():
     df["score_pred"] = df["score_if_playing"] * df["playing_chance"]
     return df
 
+
 def main():
     df = get_forecast_data()
     players = st.multiselect("Choose players", list(df.index.unique()))
