@@ -1,20 +1,20 @@
 import streamlit as st
 import pandas as pd
 
-POINTS_DATA_PATH = "gs://forecasting-fantasy-football/prod/points.csv"
-PLAYING_DATA_PATH = "gs://forecasting-fantasy-football/prod/playing.csv"
+POINTS_DATA_PATH = "gs://forecasting-fantasy-football/prod/points.pq"
+PLAYING_DATA_PATH = "gs://forecasting-fantasy-football/prod/playing.pq"
 MAX_HORIZONS = 4
 
 
 @st.cache
 def get_points_data(path):
-    df = pd.read_csv(path)
+    df = pd.read_parquet(path)
     return df
 
 
 @st.cache
 def get_playing_data(path):
-    df = pd.read_csv(path)
+    df = pd.read_parquet(path)
     return df
 
 
