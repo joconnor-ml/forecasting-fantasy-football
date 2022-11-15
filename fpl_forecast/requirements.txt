@@ -1,5 +1,5 @@
 joblib==1.2.0
-loguru==0.5.3
+loguru==0.6.0
 numpy==1.23.1
 pandas==1.4.3
 scikit_learn==1.1.3
