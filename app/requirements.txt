@@ -1,2 +1,4 @@
+gcsfs
+fsspec
 pandas
 streamlit
