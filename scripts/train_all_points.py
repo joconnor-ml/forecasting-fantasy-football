@@ -16,8 +16,8 @@ def main(max_horizon, output_path, scores_path):
             score_df["position"] = position
             all_preds.append(pred_df)
             all_scores.append(score_df)
-    pd.concat(all_preds).to_parquet(output_path)
-    pd.concat(all_scores).to_parquet(scores_path)
+    pd.concat(all_preds).to_csv(output_path)
+    pd.concat(all_scores).to_csv(scores_path)
 
 
 if __name__ == "__main__":
