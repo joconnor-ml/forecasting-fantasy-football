@@ -1,5 +1,5 @@
 methodtools==0.4.5
 numpy==1.23.1
-pandas==1.4.3
+pandas==0.25.1
 PuLP==2.6.0
 setuptools==65.5.0
