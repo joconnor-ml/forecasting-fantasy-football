@@ -1,12 +1,13 @@
 from io import StringIO
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
 BUCKET_NAME = "forecasting-fantasy-football"
 POINTS_DATA_PATH = "prod/points.csv"
 PLAYING_DATA_PATH = "prod/playing.csv"
-MAX_HORIZONS = 4
+MAX_HORIZONS = 5
 
 
 def read_gcs_file(path):
@@ -47,11 +48,15 @@ def main():
     players = st.multiselect("Choose players", list(df.index.unique()))
     if not players:
         st.error("Please select at least one player.")
-    horizons = st.multiselect("Choose horizons", range(1, MAX_HORIZONS + 1))
-    if not horizons:
-        st.error("Please select at least one horizon.")
     else:
-        st.write("### Players", df[df.horizon.isin(horizons)].loc[players])
+        c = alt.Chart(df.loc[players].reset_index()).mark_line().encode(
+            x='horizon',
+            y='score_if_playing',
+            color='name',
+            strokeDash='name',
+            tooltip=['name', 'score_if_playing', 'playing_chance']
+        )
+        st.altair_chart(c, use_container_width=True)
 
 
 if __name__ == "__main__":
