@@ -1,20 +1,32 @@
-import streamlit as st
-import pandas as pd
+from io import StringIO
 
-POINTS_DATA_PATH = "gs://forecasting-fantasy-football/prod/points.csv"
-PLAYING_DATA_PATH = "gs://forecasting-fantasy-football/prod/playing.csv"
+import pandas as pd
+import streamlit as st
+
+BUCKET_NAME = "forecasting-fantasy-football"
+POINTS_DATA_PATH = "prod/points.csv"
+PLAYING_DATA_PATH = "prod/playing.csv"
 MAX_HORIZONS = 4
+
+
+def read_gcs_file(path):
+    from google.cloud.storage import Client
+
+    client = Client()
+    bucket = client.get_bucket(BUCKET_NAME)
+    blob = bucket.get_blob(path)
+    return StringIO(blob.download_as_text(encoding="utf-8"))
 
 
 @st.cache
 def get_points_data(path):
-    df = pd.read_csv(path, index_col=0)
+    df = pd.read_csv(read_gcs_file(path), index_col=0)
     return df
 
 
 @st.cache
 def get_playing_data(path):
-    df = pd.read_csv(path, index_col=0)
+    df = pd.read_csv(read_gcs_file(path), index_col=0)
     return df
 
 
