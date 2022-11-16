@@ -1,6 +1,6 @@
 from io import StringIO
 
-import altair as alt
+import plotly.express as px
 import pandas as pd
 import streamlit as st
 
@@ -49,14 +49,15 @@ def main():
     if not players:
         st.error("Please select at least one player.")
     else:
-        c = alt.Chart(df.loc[players].reset_index()).mark_line().encode(
-            x='horizon',
-            y='score_if_playing',
-            color='name',
-            strokeDash='name',
-            tooltip=['name', 'score_if_playing', 'playing_chance']
+        fig = px.line(
+            df,
+            x="horizon",
+            y="score_if_playing",
+            color="name",
+            tooltip=["name", "score_if_playing", "playing_chance"],
         )
-        st.altair_chart(c, use_container_width=True)
+        fig.show()
+        st.plotly_chart(fig, use_container_width=True)
 
 
 if __name__ == "__main__":
