@@ -40,8 +40,8 @@ jobs:
     - name: Train points models
       run: |
         mkdir prod
-        python -m scripts.train_all_points --horizon 4 --outfile prod/points.pq --score_path prod/points_scores.pq
-        python -m scripts.train_all_playing --horizon 4 --outfile prod/playing.pq --score_path prod/playing_scores.pq
+        python -m scripts.train_all_points --horizon 4 --outfile prod/points.csv --score_path prod/points_scores.csv
+        python -m scripts.train_all_playing --horizon 4 --outfile prod/playing.csv --score_path prod/playing_scores.csv
 
     - id: 'upload-file'
       uses: 'google-github-actions/upload-cloud-storage@v0'
