@@ -26,7 +26,7 @@ jobs:
       run: |
         pip install pytest
         pip install pytest-cov
-        python -m scripts.train_all_points --horizon 1 --outfile points.pq --score_path points_scores.pq
-        python -m scripts.train_all_playing --horizon 1 --outfile playing.pq --score_path playing_scores.pq
+        python -m scripts.train_all_points --horizon 1 --outfile points.csv --score_path points_scores.csv
+        python -m scripts.train_all_playing --horizon 1 --outfile playing.csv --score_path playing_scores.csv
 
         pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
