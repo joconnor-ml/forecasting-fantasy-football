@@ -4,9 +4,13 @@ from fpl_opt import selection
 
 
 def main():
-    player_df = pd.read_parquet("total_points.pq").rename(columns={"p": "expected_score"})
+    player_df = pd.read_parquet("total_points.pq").rename(
+        columns={"p": "expected_score"}
+    )
     player_df = player_df.join(
-        pd.read_parquet("playing_chance.pq")[["p"]].rename(columns={"p": "playing_chance"})
+        pd.read_parquet("playing_chance.pq")[["p"]].rename(
+            columns={"p": "playing_chance"}
+        )
     )
 
     decisions, captain_decisions, sub_decisions = selection.select_team(

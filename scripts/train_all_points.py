@@ -11,7 +11,9 @@ def main(max_horizon, output_path, scores_path, features_path):
     all_features = []
     for position in ["GK", "DEF", "MID", "FWD"]:
         for horizon in range(1, max_horizon + 1):
-            pred_df, score_df, test_features = train_points_model.main(position, horizon)
+            pred_df, score_df, test_features = train_points_model.main(
+                position, horizon
+            )
             pred_df["horizon"] = horizon
             score_df["horizon"] = horizon
             score_df["position"] = position
