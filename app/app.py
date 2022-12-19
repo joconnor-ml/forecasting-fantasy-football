@@ -1,7 +1,7 @@
 from io import StringIO
 
-import plotly.express as px
 import pandas as pd
+import plotly.express as px
 import streamlit as st
 
 BUCKET_NAME = "forecasting-fantasy-football"
@@ -50,13 +50,12 @@ def main():
         st.error("Please select at least one player.")
     else:
         fig = px.line(
-            df,
+            df.loc[players].reset_index(),
             x="horizon",
             y="score_if_playing",
             color="name",
-            tooltip=["name", "score_if_playing", "playing_chance"],
+            hover_data=["name", "score_if_playing", "playing_chance"],
         )
-        fig.show()
         st.plotly_chart(fig, use_container_width=True)
 
 

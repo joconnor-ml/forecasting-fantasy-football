@@ -1,6 +1,3 @@
-import argparse
-import pathlib
-
 import numpy as np
 import pandas as pd
 
@@ -80,7 +77,7 @@ def main(position: str, horizon: int):
     test_features = features[inference_filter]
     out_df = df.loc[
         inference_filter,
-        ["name", "team", "position", "value", "value_rank", "minutes", "total_points"],
+        ["name", "team", "position", "value", "value_rank", "minutes", "total_points", "opponent"],
     ]
     out_df["score_pred"] = best_model.predict(test_features)
-    return out_df, all_scores
+    return out_df, all_scores, test_features
