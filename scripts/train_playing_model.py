@@ -78,6 +78,6 @@ if __name__ == "__main__":
     parser.add_argument("--outdir", type=str, required=True)
     args = parser.parse_args()
     out_df = main(args.horizon)
-    output_path = pathlib.Path(args.outdir) / f"playing_chance_{args.horizon}.csv"
+    output_path = pathlib.Path(args.outdir) / f"playing_chance_{args.horizon}.pq"
     output_path.mkdir(parents=True, exist_ok=True)
-    out_df.to_csv(output_path)
+    out_df.to_parquet(output_path)

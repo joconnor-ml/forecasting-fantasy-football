@@ -18,9 +18,9 @@ def main(max_horizon, output_path, scores_path, features_path):
             all_preds.append(pred_df)
             all_scores.append(score_df)
             all_features.append(test_features)
-    pd.concat(all_preds).to_csv(output_path)
-    pd.concat(all_scores).to_csv(scores_path)
-    pd.concat(all_features).to_csv(features_path)
+    pd.concat(all_preds).to_parquet(output_path)
+    pd.concat(all_scores).to_parquet(scores_path)
+    pd.concat(all_features).to_parquet(features_path)
 
 
 if __name__ == "__main__":

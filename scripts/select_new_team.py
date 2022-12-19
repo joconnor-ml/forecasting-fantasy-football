@@ -1,11 +1,12 @@
 import pandas as pd
+
 from fpl_opt import selection
 
 
 def main():
-    player_df = pd.read_csv("total_points.csv").rename(columns={"p": "expected_score"})
+    player_df = pd.read_parquet("total_points.pq").rename(columns={"p": "expected_score"})
     player_df = player_df.join(
-        pd.read_csv("playing_chance.csv")[["p"]].rename(columns={"p": "playing_chance"})
+        pd.read_parquet("playing_chance.pq")[["p"]].rename(columns={"p": "playing_chance"})
     )
 
     decisions, captain_decisions, sub_decisions = selection.select_team(
@@ -21,7 +22,7 @@ def main():
     selection_df = selection.get_selection_df(
         decisions, captain_decisions, sub_decisions, player_df
     )
-    selection_df[selection.COLS_TO_PRINT].to_csv("selection.csv")
+    selection_df[selection.COLS_TO_PRINT].to_parquet("selection.pq")
 
 
 if __name__ == "__main__":

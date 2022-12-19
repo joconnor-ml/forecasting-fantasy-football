@@ -5,8 +5,8 @@ import plotly.express as px
 import streamlit as st
 
 BUCKET_NAME = "forecasting-fantasy-football"
-POINTS_DATA_PATH = "prod/points.csv"
-PLAYING_DATA_PATH = "prod/playing.csv"
+POINTS_DATA_PATH = "prod/points.pq"
+PLAYING_DATA_PATH = "prod/playing.pq"
 MAX_HORIZONS = 5
 
 
@@ -21,13 +21,13 @@ def read_gcs_file(path):
 
 @st.cache
 def get_points_data(path):
-    df = pd.read_csv(read_gcs_file(path), index_col=0)
+    df = pd.read_parquet(read_gcs_file(path), index_col=0)
     return df
 
 
 @st.cache
 def get_playing_data(path):
-    df = pd.read_csv(read_gcs_file(path), index_col=0)
+    df = pd.read_parquet(read_gcs_file(path), index_col=0)
     return df
 
 
