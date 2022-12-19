@@ -40,7 +40,7 @@ jobs:
     - name: Train points models
       run: |
         mkdir prod
-        python -m scripts.train_all_points --horizon 5 --outfile prod/points.csv --score_path prod/points_scores.csv
+        python -m scripts.train_all_points --horizon 5 --outfile prod/points.csv --score_path prod/points_scores.csv --features_path=prod/points_features.csv
         python -m scripts.train_all_playing --horizon 5 --outfile prod/playing.csv --score_path prod/playing_scores.csv
 
     - id: 'upload-file'
