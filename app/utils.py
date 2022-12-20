@@ -21,21 +21,15 @@ def get_settings():
 
 
 @st.cache
-def get_points_data(path):
-    df = pd.read_parquet(path)
-    return df
-
-
-@st.cache
-def get_playing_data(path):
+def read_parquet_cached(path):
     df = pd.read_parquet(path)
     return df
 
 
 @st.cache
 def get_forecast_data(points_path, playing_path):
-    playing = get_playing_data(playing_path)
-    points = get_points_data(points_path)[["name", "team", "score_pred", "horizon"]]
+    playing = read_parquet_cached(playing_path)
+    points = read_parquet_cached(points_path)[["name", "team", "score_pred", "horizon"]]
     df = playing.merge(points, how="left", on=["name", "team", "horizon"]).set_index(
         "name"
     )[["horizon", "score_pred", "playing_chance"]]
