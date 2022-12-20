@@ -1,4 +1,4 @@
-name: Deploy to App Engine
+name: Docker build and push
 
 on: push
 

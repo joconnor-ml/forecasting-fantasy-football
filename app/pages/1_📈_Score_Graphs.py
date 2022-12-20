@@ -6,11 +6,7 @@ import utils
 
 def main():
     settings = utils.get_settings()
-
-    st.set_page_config(page_title="Score Graphs", page_icon="📈")
-
-    st.markdown("# Predicted Score Graphs")
-    st.sidebar.header("Predicted Score Graphs")
+    utils.setup_page("Model Performance", icon="📈")
 
     df = utils.get_forecast_data(
         settings.points_data_path, settings.playing_data_path, settings.bucket_name
