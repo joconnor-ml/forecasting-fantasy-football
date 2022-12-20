@@ -1,9 +1,6 @@
 name: Deploy to App Engine
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 jobs:
   build:
@@ -23,9 +20,9 @@ jobs:
         workload_identity_provider: 'projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
         service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
 
-    - name: gcloud
-      uses: google-github-actions/setup-gcloud@v0
-
-    - id: deploy
-      run: |-
-        cd ./app && gcloud app deploy
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        context: app
+        push: true
+        tags: gcr.io/forecasting-fantasy-football/app:latest
