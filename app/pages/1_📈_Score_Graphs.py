@@ -12,7 +12,9 @@ def main():
     st.markdown("# Predicted Score Graphs")
     st.sidebar.header("Predicted Score Graphs")
 
-    df = utils.get_forecast_data(settings.points_data_path, settings.playing_data_path, settings.bucket_name)
+    df = utils.get_forecast_data(
+        settings.points_data_path, settings.playing_data_path, settings.bucket_name
+    )
     players = st.multiselect("Choose players", list(df.index.unique()))
     if not players:
         st.error("Please select at least one player.")

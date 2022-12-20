@@ -14,7 +14,7 @@ def main():
     points_scores = utils.read_parquet_cached(settings.points_models_data)
     st.dataframe(data=points_scores, use_container_width=True)
 
-    #playing_scores = utils.read_parquet_cached(settings.playing_models_data)
+    # playing_scores = utils.read_parquet_cached(settings.playing_models_data)
 
 
 if __name__ == "__main__":

@@ -31,6 +31,7 @@ def read_gcs_file(path, bucket_name):
     blob.download_to_file(buffer)
     return buffer
 
+
 @st.cache
 def read_parquet_cached(path, bucket_name=None):
     if bucket_name:
@@ -42,7 +43,9 @@ def read_parquet_cached(path, bucket_name=None):
 @st.cache
 def get_forecast_data(points_path, playing_path, bucket_name=None):
     playing = read_parquet_cached(playing_path, bucket_name)
-    points = read_parquet_cached(points_path, bucket_name)[["name", "team", "score_pred", "horizon"]]
+    points = read_parquet_cached(points_path, bucket_name)[
+        ["name", "team", "score_pred", "horizon"]
+    ]
     df = playing.merge(points, how="left", on=["name", "team", "horizon"]).set_index(
         "name"
     )[["horizon", "score_pred", "playing_chance"]]
