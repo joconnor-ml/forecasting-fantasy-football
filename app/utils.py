@@ -7,8 +7,8 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     bucket_name: str = "forecasting-fantasy-football"
-    points_data_path: str = "prod/points.pq"
-    playing_data_path: str = "prod/playing.pq"
+    points_data_path: str = "gs://forecasting-fantasy-football/prod/points.pq"
+    playing_data_path: str = "gs://forecasting-fantasy-football/prod/playing.pq"
     forecast_horizon: int = 5
 
     class Config:
