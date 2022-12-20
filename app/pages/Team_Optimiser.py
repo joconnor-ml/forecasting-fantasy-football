@@ -4,6 +4,7 @@ import utils
 
 settings = utils.get_settings()
 
+
 def main():
     st.set_page_config(page_title="Team Optimiser", page_icon="📈")
 
