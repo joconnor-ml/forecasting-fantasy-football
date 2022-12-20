@@ -1,4 +1,8 @@
-from app.Forecasting_Fantasy_Football import get_points_data, get_playing_data, get_forecast_data
+from app.Forecasting_Fantasy_Football import (
+    get_points_data,
+    get_playing_data,
+    get_forecast_data,
+)
 
 
 class TestApp:

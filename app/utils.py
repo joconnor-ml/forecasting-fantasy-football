@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+
 @lru_cache
 def get_settings():
     return Settings()
@@ -41,6 +42,3 @@ def get_forecast_data(points_path, playing_path):
     df = df.rename(columns={"score_pred": "score_if_playing"})
     df["score_pred"] = df["score_if_playing"] * df["playing_chance"]
     return df
-
-
-
