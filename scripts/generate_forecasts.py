@@ -54,7 +54,7 @@ def main():
                 ]
             ]
             out_df["price"] = out_df["value"] / 10
-            out_df.to_csv(f"{name}.csv", index=False)
+            out_df.to_parquet(f"{name}.pq", index=False)
 
 
 if __name__ == "__main__":

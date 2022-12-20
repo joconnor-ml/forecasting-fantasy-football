@@ -124,7 +124,7 @@ def get_player_data(seasons):
 
     fixture_df = get_fixture_df(seasons)
     df = df.merge(
-        fixture_df[["season", "id", "team", "total_difficulty"]],
+        fixture_df[["season", "id", "team", "total_difficulty", "opponent"]],
         left_on=["season", "fixture", "team"],
         right_on=["season", "id", "team"],
         how="left",
@@ -184,9 +184,9 @@ def get_fixture_df(seasons):
                     "team_h": "team",
                     "team_h_difficulty": "difficulty",
                     "team_h_score": "score",
-                    "team_a": "opposition",
-                    "team_a_difficulty": "opposition_difficulty",
-                    "team_a_score": "opposition_score",
+                    "team_a": "opponent",
+                    "team_a_difficulty": "opponent_difficulty",
+                    "team_a_score": "opponent_score",
                 }
             ).assign(was_home=True),
             fixtures.rename(
@@ -194,15 +194,15 @@ def get_fixture_df(seasons):
                     "team_a": "team",
                     "team_a_difficulty": "difficulty",
                     "team_a_score": "score",
-                    "team_h": "opposition",
-                    "team_h_difficulty": "opposition_difficulty",
-                    "team_h_score": "opposition_score",
+                    "team_h": "opponent",
+                    "team_h_difficulty": "opponent_difficulty",
+                    "team_h_score": "opponent_score",
                 }
             ).assign(was_home=False),
         ]
     ).reset_index()
-    fixtures["margin"] = fixtures["score"] - fixtures["opposition_score"]
+    fixtures["margin"] = fixtures["score"] - fixtures["opponent_score"]
     fixtures["total_difficulty"] = (
-        fixtures["opposition_difficulty"] - fixtures["difficulty"]
+        fixtures["opponent_difficulty"] - fixtures["difficulty"]
     )
     return fixtures
