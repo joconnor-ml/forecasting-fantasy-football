@@ -6,16 +6,16 @@ import utils
 
 def main():
     settings = utils.get_settings()
-
-    st.set_page_config(page_title="Score Graphs", page_icon="📈")
-
-    st.markdown("# Predicted Score Graphs")
-    st.sidebar.header("Predicted Score Graphs")
+    utils.setup_page("Score Graphs", icon="📈")
 
     df = utils.get_forecast_data(
         settings.points_data_path, settings.playing_data_path, settings.bucket_name
     )
-    players = st.multiselect("Choose players", list(df.index.unique()))
+    players = st.multiselect(
+        "Choose players",
+        list(df.index.unique()),
+        default=["Erling Haaland", "Mohamed Salah"],
+    )
     if not players:
         st.error("Please select at least one player.")
     else:
