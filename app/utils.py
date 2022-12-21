@@ -2,6 +2,7 @@ import io
 from functools import lru_cache
 
 import pandas as pd
+import requests
 import streamlit as st
 from google.cloud.storage import Client
 from pydantic import BaseSettings
@@ -55,8 +56,31 @@ def get_forecast_data(points_path, playing_path, bucket_name=None):
     df["score_pred"] = df["score_if_playing"] * df["playing_chance"]
     return df
 
+
 def setup_page(title, icon=None):
     st.set_page_config(page_title=title, page_icon=icon)
 
     st.markdown(f"# {title}")
     st.sidebar.header(title)
+
+
+@st.cache
+def get_team_data(entry_id, gameweek):
+    """Retrieve the gw-by-gw data for a specific entry/team
+
+    credit: vaastav/Fantasy-Premier-League/getters.py
+
+    Args:
+        entry_id (int) : ID of the team whose data is to be retrieved
+    """
+    base_url = "https://fantasy.premierleague.com/api/entry/"
+    full_url = base_url + str(entry_id) + "/event/" + str(gameweek) + "/picks/"
+    response = requests.get(full_url)
+    response.raise_for_status()
+    data = response.json()
+    return pd.DataFrame(data["picks"])
+
+
+def get_last_gameweek():
+    # TODO
+    return 16
