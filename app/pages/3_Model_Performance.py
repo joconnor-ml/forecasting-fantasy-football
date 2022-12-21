@@ -29,12 +29,13 @@ def get_model_scores(points_models_data, playing_models_data, bucket_name):
 
 def main():
     utils.setup_page("Model Performance")
-    best_scores, points_scores, playing_scores = get_model_scores(settings.points_models_data, settings.playing_models_data, settings.bucket_name
+    best_scores, points_scores, playing_scores = get_model_scores(
+        settings.points_models_data, settings.playing_models_data, settings.bucket_name
     )
 
     st.markdown("### Playing Chance Accuracy")
     fig = px.line(
-        best_scores[best_scores["model"]=="playing_chance"],
+        best_scores[best_scores["model"] == "playing_chance"],
         x="horizon",
         y="score",
         hover_data=["score"],
