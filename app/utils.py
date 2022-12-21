@@ -55,6 +55,7 @@ def get_forecast_data(points_path, playing_path, bucket_name=None):
     df["score_pred"] = df["score_if_playing"] * df["playing_chance"]
     return df
 
+
 def setup_page(title, icon=None):
     st.set_page_config(page_title=title, page_icon=icon)
 
