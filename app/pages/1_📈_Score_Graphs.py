@@ -6,12 +6,12 @@ import utils
 
 def main():
     settings = utils.get_settings()
-    utils.setup_page("Model Performance", icon="📈")
+    utils.setup_page("Score Graphs", icon="📈")
 
     df = utils.get_forecast_data(
         settings.points_data_path, settings.playing_data_path, settings.bucket_name
     )
-    players = st.multiselect("Choose players", list(df.index.unique()))
+    players = st.multiselect("Choose players", list(df.index.unique()), default=["Erling Haaland", "Mohamed Salah"])
     if not players:
         st.error("Please select at least one player.")
     else:
