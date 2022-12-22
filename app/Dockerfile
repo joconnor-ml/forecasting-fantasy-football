@@ -16,4 +16,4 @@ COPY . /app
 WORKDIR /app
 
 #Run the application on port 8080
-ENTRYPOINT ["streamlit", "run", "Forecasting_Fantasy_Football.py", "--server.enableCORS", "false", "--server.port=8080", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "Forecasting_Fantasy_Football.py", "--server.enableCORS", "false", "--server.enableXsrfProtection", "false", "--server.port=8080", "--server.address=0.0.0.0"]
