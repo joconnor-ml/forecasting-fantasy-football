@@ -16,4 +16,4 @@ COPY . /app
 WORKDIR /app
 
 #Run the application on port 8080
-ENTRYPOINT ["find", "/usr/local/lib/python3.9/site-packages/streamlit", "-type", "f", "\( -iname \*.py -o -iname \*.js \)", "-print0", "|", "xargs", "-0", "sed", "-i", "'s/healthz/health-check/g'", "&&", "streamlit", "run", "Forecasting_Fantasy_Football.py", "--server.enableCORS", "false", "--server.enableXsrfProtection", "false", "--server.port=8080", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "Forecasting_Fantasy_Football.py", "server.enableWebsocketCompression", "false", "--server.enableXsrfProtection", "false", "--server.port=8080", "--server.address=0.0.0.0"]
