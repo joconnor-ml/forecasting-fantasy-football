@@ -79,6 +79,7 @@ def main(position: str, horizon: int):
         inference_filter,
         [
             "name",
+            "element",
             "team",
             "position",
             "value",
