@@ -15,5 +15,7 @@ COPY . /app
 #Change Working Directory to app directory
 WORKDIR /app
 
+RUN find /usr/local/lib/python3.10/site-packages/streamlit -type f \( -iname \*.py -o -iname \*.js \) -print0 | xargs -0 sed -i 's/healthz/health-check/g'
+
 #Run the application on port 8080
-ENTRYPOINT ["streamlit", "run", "Forecasting_Fantasy_Football.py", "server.enableWebsocketCompression", "false", "--server.enableXsrfProtection", "false", "--server.port=8080", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "Forecasting_Fantasy_Football.py", "--server.enableCORS", "false", "--server.port=8080", "--server.address=0.0.0.0"]
