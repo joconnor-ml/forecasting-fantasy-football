@@ -10,21 +10,24 @@ def main():
     st.markdown("### Import your team:")
     st.markdown(
         "Copy your team code here from the `points` page on FPL, "
-        "e.g. for my team: https://fantasy.premierleague.com/entry/*7148592*/event/16"
+        "e.g. for my team: [https://fantasy.premierleague.com/entry/"
+        "**7148592**/event/16](https://fantasy.premierleague.com/entry/7148592/event/16)"
     )
     team_id = int(st.text_input("Team ID", "7148592"))
     team_data = utils.get_team_data(team_id, gameweek=utils.get_current_gameweek())
     team_data = team_data.rename(
         columns={"web_name": "Name", "now_cost": "Price", "event_points": "Points"}
-    )
+    ).set_index("Name")
+    team_data["Price"] /= 10
     st.dataframe(
-        team_data.set_index("Name").loc[
+        team_data.loc[
             team_data["position"] <= 11, ["Price", "Points"]
         ],
         use_container_width=True,
     )
+    st.markdown("Subs")
     st.dataframe(
-        team_data.loc[team_data["position"] > 11, ["Name", "Price", "Points"]],
+        team_data.loc[team_data["position"] > 11, ["Price", "Points"]],
         use_container_width=True,
     )
 
