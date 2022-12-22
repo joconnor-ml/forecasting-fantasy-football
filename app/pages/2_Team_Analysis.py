@@ -18,7 +18,9 @@ def main():
         columns={"web_name": "Name", "now_cost": "Price", "event_points": "Points"}
     )
     st.dataframe(
-        team_data.loc[team_data["position"] <= 11, ["Name", "Price", "Points"]],
+        team_data.set_index("Name").loc[
+            team_data["position"] <= 11, ["Price", "Points"]
+        ],
         use_container_width=True,
     )
     st.dataframe(
