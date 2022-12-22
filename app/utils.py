@@ -2,6 +2,7 @@ import io
 from functools import lru_cache
 
 import pandas as pd
+import requests
 import streamlit as st
 from google.cloud.storage import Client
 from pydantic import BaseSettings
@@ -61,3 +62,55 @@ def setup_page(title, icon=None):
 
     st.markdown(f"# {title}")
     st.sidebar.header(title)
+
+
+@st.cache
+def get_team_data(entry_id, gameweek):
+    """Retrieve the gw-by-gw data for a specific entry/team
+
+    credit: vaastav/Fantasy-Premier-League/getters.py
+
+    Args:
+        entry_id (int) : ID of the team whose data is to be retrieved
+    """
+    base_url = "https://fantasy.premierleague.com/api/entry/"
+    full_url = base_url + str(entry_id) + "/event/" + str(gameweek) + "/picks/"
+    response = requests.get(full_url)
+    response.raise_for_status()
+    data = response.json()
+    team_picks = pd.DataFrame(data["picks"])
+    return team_picks.merge(
+        get_player_data()[
+            ["id", "web_name", "now_cost", "event_points", "element_type"]
+        ],
+        left_on="element",
+        right_on="id",
+    )
+
+
+@st.cache
+def get_game_data():
+    response = requests.get("https://fantasy.premierleague.com/api/bootstrap-static/")
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+
+@st.cache
+def get_gameweek_data():
+    return pd.DataFrame(get_game_data()["events"])
+
+
+@st.cache
+def get_player_data():
+    return pd.DataFrame(get_game_data()["elements"])
+
+
+@st.cache
+def get_club_data():
+    return pd.DataFrame(get_game_data()["teams"])
+
+
+def get_current_gameweek():
+    gameweeks = get_gameweek_data()
+    return gameweeks[gameweeks["is_current"]].iloc[-1]["id"]

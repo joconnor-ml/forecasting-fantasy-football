@@ -1,6 +1,9 @@
 name: Docker build and push
 
-on: push
+on:
+  push:
+    branches:
+    - master
 
 jobs:
   build:
@@ -29,3 +32,14 @@ jobs:
         context: app
         push: true
         tags: gcr.io/forecasting-fantasy-football/app:latest
+
+    - id: deploy
+      uses: google-github-actions/deploy-cloudrun@v1
+      with:
+        service: forecasting-fantasy-football-app
+        image: gcr.io/forecasting-fantasy-football/app:latest
+        region: europe-north1
+
+    - name: Use output
+      run: |
+        curl "${{ steps.deploy.outputs.url }}"
