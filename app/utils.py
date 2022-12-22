@@ -78,9 +78,39 @@ def get_team_data(entry_id, gameweek):
     response = requests.get(full_url)
     response.raise_for_status()
     data = response.json()
-    return pd.DataFrame(data["picks"])
+    team_picks = pd.DataFrame(data["picks"])
+    return team_picks.merge(
+        get_player_data()[
+            ["id", "web_name", "now_cost", "event_points", "element_type"]
+        ],
+        left_on="element",
+        right_on="id",
+    )
 
 
-def get_last_gameweek():
-    # TODO
-    return 16
+@st.cache
+def get_game_data():
+    response = requests.get("https://fantasy.premierleague.com/api/bootstrap-static/")
+    response.raise_for_status()
+    data = response.json()
+    return data
+
+
+@st.cache
+def get_gameweek_data():
+    return pd.DataFrame(get_game_data()["events"])
+
+
+@st.cache
+def get_player_data():
+    return pd.DataFrame(get_game_data()["elements"])
+
+
+@st.cache
+def get_club_data():
+    return pd.DataFrame(get_game_data()["teams"])
+
+
+def get_current_gameweek():
+    gameweeks = get_gameweek_data()
+    return gameweeks[gameweeks["is_current"]].iloc[-1]["id"]
