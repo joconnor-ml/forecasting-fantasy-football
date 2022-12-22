@@ -38,6 +38,7 @@ jobs:
       with:
         service: forecasting-fantasy-football-app
         image: gcr.io/forecasting-fantasy-football/app:latest
+        region: europe-north1
 
     - name: Use output
       run: |
