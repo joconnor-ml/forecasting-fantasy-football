@@ -36,6 +36,16 @@ jobs:
         workload_identity_provider: 'projects/882200096888/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
         service_account: 'github-actions@forecasting-fantasy-football.iam.gserviceaccount.com'
 
+    - name: Configure Docker
+      run: gcloud auth configure-docker --quiet
+
+    - name: Build and push
+      uses: docker/build-push-action@v3
+      with:
+        context: app
+        push: false
+        tags: gcr.io/forecasting-fantasy-football/app:latest
+
     - name: Test
       run: |
         pip install pytest
