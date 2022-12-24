@@ -28,7 +28,7 @@ def get_model_scores(points_models_data, playing_models_data, bucket_name):
 
 
 def main():
-    utils.setup_page("Model Performance")
+    utils.setup_page("Model Performance", icon="📉")
     best_scores, points_scores, playing_scores = get_model_scores(
         settings.points_models_data, settings.playing_models_data, settings.bucket_name
     )

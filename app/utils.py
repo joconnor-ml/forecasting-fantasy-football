@@ -51,16 +51,16 @@ def get_forecast_data(points_path, playing_path, bucket_name=None):
     ]
     df = playing.merge(points, how="left", on=["name", "team", "horizon"]).set_index(
         "name"
-    )[["horizon", "score_pred", "playing_chance"]]
+    )[["horizon", "score_pred", "playing_chance", "element"]]
     df = df.rename(columns={"score_pred": "score_if_playing"})
     df["score_pred"] = df["score_if_playing"] * df["playing_chance"]
     return df
 
 
-def setup_page(title, icon=None):
+def setup_page(title, icon):
     st.set_page_config(page_title=title, page_icon=icon)
 
-    st.markdown(f"# {title}")
+    st.markdown(f"# {icon} {title}")
     st.sidebar.header(title)
 
 
