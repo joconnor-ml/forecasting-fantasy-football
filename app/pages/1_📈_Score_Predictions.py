@@ -6,7 +6,7 @@ import utils
 
 def main():
     settings = utils.get_settings()
-    utils.setup_page("Score Graphs", icon="📈")
+    utils.setup_page("Score Predictions", icon="📈")
 
     df = utils.get_forecast_data(
         settings.points_data_path, settings.playing_data_path, settings.bucket_name

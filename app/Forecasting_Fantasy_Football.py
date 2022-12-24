@@ -2,12 +2,10 @@ import streamlit as st
 
 import utils
 
-st.set_page_config(
-    page_title="Forecasting Fantasy Football",
-    page_icon="⚽",
+utils.setup_page(
+    "Forecasting Fantasy Football",
+    icon="⚽",
 )
-
-st.write("# Forecasting Fantasy Football")
 
 current_gameweek = utils.get_current_gameweek()
 st.markdown(
