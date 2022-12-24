@@ -21,12 +21,16 @@ def main():
     ).set_index("Name")
     team_data["Price"] /= 10
     st.dataframe(
-        team_data.loc[team_data["position"] <= 11, ["Price", "Points"]],
+        team_data.loc[team_data["position"] <= 11, ["Price", "Points"]].style.format(
+            {"Price": "{:.1f}"}
+        ),
         use_container_width=True,
     )
     st.markdown("Subs")
     st.dataframe(
-        team_data.loc[team_data["position"] > 11, ["Price", "Points"]],
+        team_data.loc[team_data["position"] > 11, ["Price", "Points"]].style.format(
+            {"Price": "{:.1f}"}
+        ),
         use_container_width=True,
     )
 
