@@ -133,7 +133,6 @@ class PointsModel:
                 utils.generate_rolling_features(
                     df,
                     ["minutes", "total_points", "xP"],
-                    windows=(4, 20),
                     aggs=("mean",),
                 ),
                 utils.generate_lag_features(
