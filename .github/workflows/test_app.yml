@@ -48,11 +48,8 @@ jobs:
 
     - name: Test
       run: |
+        cd app
         pip install pytest
         pip install pytest-cov
-        pip install -r fpl_forecast/requirements.txt
-        python -m scripts.train_all_points --horizon 1 --outfile points.pq --score_path points_scores.pq --features_path features.pq
-        python -m scripts.train_all_playing --horizon 1 --outfile playing.pq --score_path playing_scores.pq
-
-        pip install -r app/requirements.txt
-        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        pip install -r requirements.txt
+        PYTHONPATH=. pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
