@@ -7,7 +7,7 @@ import streamlit as st
 from google.cloud.storage import Client
 from pydantic import BaseSettings
 
-import fpl_opt
+import fpl_opt.selection
 
 
 class Settings(BaseSettings):
@@ -144,4 +144,8 @@ def pick_team(points_data_path, playing_data_path, bucket_name, budget):
         sub_factors=[0.15, 0.15, 0.15, 0.05],
         total_budget=budget,
     )
-    return decisions, captain_decisions, sub_decisions
+    selection_df = fpl_opt.selection.get_selection_df(
+        decisions, captain_decisions, sub_decisions, player_df
+    )
+
+    return selection_df
