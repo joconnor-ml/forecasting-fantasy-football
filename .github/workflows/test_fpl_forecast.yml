@@ -38,5 +38,5 @@ jobs:
         pip install pytest
         pip install pytest-cov
         pip install -r fpl_forecast/requirements.txt
-        python -m scripts.train_all_points --horizon 1 --outfile points.pq --score_path points_scores.pq --features_path features.pq
+        python -m scripts.train_all_points --horizon 1 --outfile points.pq --score_path points_scores.pq --features_path features.pq --imps_path=imps.pq
         python -m scripts.train_all_playing --horizon 1 --outfile playing.pq --score_path playing_scores.pq

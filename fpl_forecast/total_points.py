@@ -147,7 +147,7 @@ class PointsModel:
         )
 
     def get_feature_importances(self):
-        return pd.Series(self.model.steps[-1][-1]._coef, index=self.feature_names)
+        return pd.Series(self.model.steps[-1][-1].coef_, index=self.feature_names)
 
 
 class GKModel(PointsModel):
