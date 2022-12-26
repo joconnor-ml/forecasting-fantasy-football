@@ -49,6 +49,8 @@ def get_models(position, horizon):
 
 
 class PointsModel:
+    feature_names = None
+
     def __init__(self, model, horizon):
         self.model = model
         self.horizon = horizon
@@ -108,6 +110,7 @@ class PointsModel:
         return np.clip(targets, 0, np.inf) ** 0.66
 
     def train(self, train_features, train_targets, **fit_kwargs):
+        self.feature_names = train_features.columns
         self.model = self.model.fit(
             train_features, self.transform(train_targets), **fit_kwargs
         )
@@ -142,6 +145,9 @@ class PointsModel:
             ],
             axis=1,
         )
+
+    def get_feature_importances(self):
+        return pd.Series(self.model.steps[-1][-1]._coef, index=self.feature_names)
 
 
 class GKModel(PointsModel):

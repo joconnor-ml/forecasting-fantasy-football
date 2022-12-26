@@ -90,4 +90,5 @@ def main(position: str, horizon: int):
         ],
     ]
     out_df["score_pred"] = best_model.predict(test_features)
-    return out_df, all_scores, test_features
+    feature_imp = best_model.get_feature_importances()
+    return out_df, all_scores, test_features, feature_imp
