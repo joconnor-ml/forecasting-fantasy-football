@@ -11,7 +11,7 @@ from sklearn.metrics import (
     mean_absolute_error,
 )
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
 
 from . import utils
 
@@ -32,18 +32,6 @@ def get_models(position, horizon):
                 horizon=horizon,
             )
             for alpha in [0.1, 1, 10, 100]
-        },
-        **{
-            f"lasso_poly_{alpha}": model_class(
-                model=make_pipeline(
-                    SimpleImputer(),
-                    PolynomialFeatures(),
-                    StandardScaler(),
-                    Lasso(alpha=alpha),
-                ),
-                horizon=horizon,
-            )
-            for alpha in [0.1, 1, 10]
         },
     }
 
