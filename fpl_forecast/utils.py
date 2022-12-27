@@ -126,11 +126,12 @@ def get_player_data(seasons):
 
     fixture_df = get_fixture_df(seasons)
     df = df.merge(
-        fixture_df[["season", "id", "team", "total_difficulty", "opponent"]],
+        fixture_df[["season", "id", "team", "total_difficulty", "opponent", "elo", "opponent_elo", "win_prob"]],
         left_on=["season", "fixture", "team"],
         right_on=["season", "id", "team"],
         how="left",
     )
+    df["elo_diff"] = df["elo"] - df["opponent_elo"]
 
     # extend current season into future using fixture df
     this_season = df.query(f"season=='{seasons[-1]}'")
