@@ -58,7 +58,7 @@ def generate_lag_features(df, cols, lags=(0, 1, 2)):
 def generate_rolling_features(df, cols, windows=(3, 19), aggs=("mean", "median")):
     feats = (
         df.groupby(PLAYER_ID_COL)[cols]
-        .ewm(halflife=window/2, min_periods=window//2)
+        .ewm(halflife=window / 2, min_periods=window // 2)
         .agg(agg)
         .add_suffix(f"_rolling_{window}_{agg}")
         for window in windows

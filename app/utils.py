@@ -47,16 +47,26 @@ def read_parquet_cached(path, bucket_name=None):
 
 @st.cache
 def get_forecast_data(points_path, playing_path, features_path, bucket_name=None):
-    top_features = ["total_difficulty", "value_rank_lag_0", "total_points_rolling_19_mean",
-                    "total_points_rolling_3_mean"]
+    top_features = [
+        "total_difficulty",
+        "value_rank_lag_0",
+        "total_points_rolling_19_mean",
+        "total_points_rolling_3_mean",
+    ]
     features = read_parquet_cached(features_path, bucket_name)[top_features]
     playing = read_parquet_cached(playing_path, bucket_name)
-    points = pd.concat([read_parquet_cached(points_path, bucket_name)[
-        ["name", "team", "score_pred", "horizon"]
-    ], features], axis=1)
+    points = pd.concat(
+        [
+            read_parquet_cached(points_path, bucket_name)[
+                ["name", "team", "score_pred", "horizon"]
+            ],
+            features,
+        ],
+        axis=1,
+    )
     df = playing.merge(points, how="left", on=["name", "team", "horizon"]).set_index(
         "name"
-    )[["horizon", "score_pred", "playing_chance", "element"]+top_features]
+    )[["horizon", "score_pred", "playing_chance", "element"] + top_features]
     df = df.rename(columns={"score_pred": "score_if_playing"})
     df["score_pred"] = df["score_if_playing"] * df["playing_chance"]
     return df

@@ -9,7 +9,10 @@ def main():
     utils.setup_page("Score Predictions", icon="📈")
 
     df = utils.get_forecast_data(
-        settings.points_data_path, settings.playing_data_path, settings.features_path, settings.bucket_name
+        settings.points_data_path,
+        settings.playing_data_path,
+        settings.features_path,
+        settings.bucket_name,
     )
     players = st.multiselect(
         "Choose players",
@@ -29,7 +32,8 @@ def main():
         st.plotly_chart(fig, use_container_width=True)
         st.dataframe(df.loc[players], use_container_width=True)
 
-        #df.loc[players].merge()
+        # df.loc[players].merge()
+
 
 if __name__ == "__main__":
     main()

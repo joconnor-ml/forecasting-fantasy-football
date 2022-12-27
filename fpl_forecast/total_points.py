@@ -126,10 +126,11 @@ class PointsModel:
                     ["minutes", "xP"],
                     aggs=("mean",),
                 ),
-                utils.generate_lag_features(
-                    df, ["minutes", "xP"], lags=(0,)
-                ),
-                (utils.generate_lag_features(df, ["value_rank"], lags=(0,)) + np.random.uniform(0, 1)).clip(1, 6),
+                utils.generate_lag_features(df, ["minutes", "xP"], lags=(0,)),
+                (
+                    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
+                    + np.random.uniform(0, 1)
+                ).clip(1, 6),
             ],
             axis=1,
         )

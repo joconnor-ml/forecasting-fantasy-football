@@ -59,27 +59,42 @@ def main():
     st.dataframe(points_scores, use_container_width=True)
 
     st.markdown("### Feature importances: Gameweek Points")
-    feature_importance = utils.read_parquet_cached(settings.feature_imps_path, settings.bucket_name).reset_index().groupby(["index", "position"]).mean().reset_index().rename(columns={"index": "feature"})
+    feature_importance = (
+        utils.read_parquet_cached(settings.feature_imps_path, settings.bucket_name)
+        .reset_index()
+        .groupby(["index", "position"])
+        .mean()
+        .reset_index()
+        .rename(columns={"index": "feature"})
+    )
 
     fig = px.bar(
         feature_importance,
         x="feature",
         y="importance",
         color="position",
-        barmode="group"
+        barmode="group",
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    feature_importance = utils.read_parquet_cached(settings.feature_imps_path, settings.bucket_name).reset_index().groupby(["index", "horizon"]).mean().reset_index().rename(columns={"index": "feature"})
+    feature_importance = (
+        utils.read_parquet_cached(settings.feature_imps_path, settings.bucket_name)
+        .reset_index()
+        .groupby(["index", "horizon"])
+        .mean()
+        .reset_index()
+        .rename(columns={"index": "feature"})
+    )
     feature_importance["horizon"] = feature_importance["horizon"].astype(str)
     fig = px.bar(
         feature_importance,
         x="feature",
         y="importance",
         color="horizon",
-        barmode="group"
+        barmode="group",
     )
     st.plotly_chart(fig, use_container_width=True)
+
 
 if __name__ == "__main__":
     main()
