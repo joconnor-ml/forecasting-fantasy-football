@@ -141,7 +141,7 @@ class PointsModel:
                 (
                     utils.generate_lag_features(df, ["value_rank"], lags=(0,))
                     + np.random.uniform(0, 1)
-                ).clip(1, 6),
+                ).clip(1, 3),
             ],
             axis=1,
         )
