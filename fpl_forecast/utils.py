@@ -153,6 +153,7 @@ def get_player_data(seasons):
 
     return df
 
+
 def calculate_elo(fixtures):
     def expect_result(p1, p2):
         exp = (p2 - p1) / 400.0
@@ -180,20 +181,36 @@ def calculate_elo(fixtures):
             home_weight = away_weight = 0.5
         return home_weight, away_weight
 
-
     def update(ratings, home, away, home_score, away_score, home_advantage, k):
-        pred_home_win, pred_away_win = expect_result(ratings[home] + home_advantage, ratings[away])
+        pred_home_win, pred_away_win = expect_result(
+            ratings[home] + home_advantage, ratings[away]
+        )
         home_result, away_result = get_result(home_score, away_score)
         score_weight = get_score_weight(home_score, away_score)
         ratings[home] = ratings[home] + k * score_weight * (home_result - pred_home_win)
         ratings[away] = ratings[away] + k * score_weight * (home_result - pred_home_win)
 
-    ratings = defaultdict(lambda: 1300.)  # dict of {team: rating}
+    ratings = defaultdict(lambda: 1300.0)  # dict of {team: rating}
     output = []
     for i, row in fixtures.iterrows():
-        update(ratings, row["team_h"], row["team_a"], row["team_h_score"], row["team_a_score"], home_advantage=100, k=40)
-        output.append(dict(team_h_elo=ratings["team_h"], team_a_elo=ratings["team_a"], home_win_prob=expect_result(ratings["team_h"], ratings["team_a"])[0]))
-    return pd.DataFrame(output)
+        update(
+            ratings,
+            row["team_h"],
+            row["team_a"],
+            row["team_h_score"],
+            row["team_a_score"],
+            home_advantage=100,
+            k=40,
+        )
+        output.append(
+            dict(
+                team_h_elo=ratings["team_h"],
+                team_a_elo=ratings["team_a"],
+                home_win_prob=expect_result(ratings["team_h"], ratings["team_a"])[0],
+            )
+        )
+    return pd.DataFrame(output, index=fixtures.index)
+
 
 def get_score_distributions():
     df = pd.read_csv(
