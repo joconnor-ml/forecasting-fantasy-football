@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import pandas as pd
 from loguru import logger
 
@@ -124,11 +126,23 @@ def get_player_data(seasons):
 
     fixture_df = get_fixture_df(seasons)
     df = df.merge(
-        fixture_df[["season", "id", "team", "total_difficulty", "opponent"]],
+        fixture_df[
+            [
+                "season",
+                "id",
+                "team",
+                "total_difficulty",
+                "opponent",
+                "elo",
+                "opponent_elo",
+                "win_prob",
+            ]
+        ],
         left_on=["season", "fixture", "team"],
         right_on=["season", "id", "team"],
         how="left",
     )
+    df["elo_diff"] = df["elo"] - df["opponent_elo"]
 
     # extend current season into future using fixture df
     this_season = df.query(f"season=='{seasons[-1]}'")
@@ -150,6 +164,64 @@ def get_player_data(seasons):
     df = pd.concat([df, future_players.assign(minutes=90)]).reset_index()
 
     return df
+
+
+def calculate_elo(fixtures):
+    def expect_result(p1, p2):
+        exp = (p2 - p1) / 400.0
+        home_win = 1 / ((10.0 ** (exp)) + 1)
+        return home_win, 1 - home_win
+
+    def get_score_weight(home_score, away_score):
+        score_diff = abs(home_score - away_score)
+        if score_diff < 2:
+            score_weight = 1
+        elif score_diff == 2:
+            score_weight = 3 / 2
+        else:
+            score_weight = (11 + score_diff) / 8
+        return score_weight
+
+    def get_result(home_score, away_score):
+        if home_score > away_score:
+            home_weight = 1
+            away_weight = 0
+        elif home_score < away_score:
+            home_weight = 0
+            away_weight = 1
+        else:
+            home_weight = away_weight = 0.5
+        return home_weight, away_weight
+
+    def update(ratings, home, away, home_score, away_score, home_advantage, k):
+        pred_home_win, pred_away_win = expect_result(
+            ratings[home] + home_advantage, ratings[away]
+        )
+        home_result, away_result = get_result(home_score, away_score)
+        score_weight = get_score_weight(home_score, away_score)
+        ratings[home] = ratings[home] + k * score_weight * (home_result - pred_home_win)
+        ratings[away] = ratings[away] + k * score_weight * (home_result - pred_home_win)
+
+    ratings = defaultdict(lambda: 1300.0)  # dict of {team: rating}
+    output = []
+    for i, row in fixtures.iterrows():
+        update(
+            ratings,
+            row["team_h"],
+            row["team_a"],
+            row["team_h_score"],
+            row["team_a_score"],
+            home_advantage=100,
+            k=40,
+        )
+        output.append(
+            dict(
+                team_h_elo=ratings["team_h"],
+                team_a_elo=ratings["team_a"],
+                home_win_prob=expect_result(ratings["team_h"], ratings["team_a"])[0],
+            )
+        )
+    return pd.DataFrame(output, index=fixtures.index)
 
 
 def get_score_distributions():
@@ -178,6 +250,7 @@ def get_fixture_df(seasons):
         ).assign(season=season)
         for season in seasons
     )
+    fixtures = pd.concat([fixtures, calculate_elo(fixtures)], axis=1)
     fixtures = pd.concat(
         [
             fixtures.rename(
@@ -185,9 +258,12 @@ def get_fixture_df(seasons):
                     "team_h": "team",
                     "team_h_difficulty": "difficulty",
                     "team_h_score": "score",
+                    "team_h_elo": "elo",
+                    "home_win_prob": "win_prob",
                     "team_a": "opponent",
                     "team_a_difficulty": "opponent_difficulty",
                     "team_a_score": "opponent_score",
+                    "team_a_elo": "opponent_elo",
                 }
             ).assign(was_home=True),
             fixtures.rename(
@@ -195,11 +271,13 @@ def get_fixture_df(seasons):
                     "team_a": "team",
                     "team_a_difficulty": "difficulty",
                     "team_a_score": "score",
+                    "team_a_elo": "elo",
                     "team_h": "opponent",
                     "team_h_difficulty": "opponent_difficulty",
                     "team_h_score": "opponent_score",
+                    "team_h_elo": "opponent_elo",
                 }
-            ).assign(was_home=False),
+            ).assign(was_home=False, win_prob=lambda x: 1 - x.home_win_prob),
         ]
     ).reset_index()
     fixtures["margin"] = fixtures["score"] - fixtures["opponent_score"]

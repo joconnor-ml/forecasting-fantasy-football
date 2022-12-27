@@ -1,6 +1,7 @@
 import argparse
 
 import pandas as pd
+from loguru import logger
 
 from . import train_points_model
 
@@ -25,6 +26,7 @@ def main(max_horizon, output_path, scores_path, features_path, imps_path):
             all_scores.append(score_df)
             all_features.append(test_features)
             all_imps.append(feature_imp)
+    logger.info(f"{all_scores}")
     pd.concat(all_preds).to_parquet(output_path)
     pd.concat(all_scores).to_parquet(scores_path)
     pd.concat(all_features).to_parquet(features_path)

@@ -38,7 +38,10 @@ def main():
     st.markdown("Your team is very good, well done.")
 
     preds = utils.get_forecast_data(
-        settings.points_data_path, settings.playing_data_path, settings.bucket_name
+        settings.points_data_path,
+        settings.playing_data_path,
+        settings.features_path,
+        settings.bucket_name,
     ).reset_index()
     team_data_with_preds = team_data.merge(
         preds[["element", "score_if_playing", "playing_chance", "horizon", "name"]],

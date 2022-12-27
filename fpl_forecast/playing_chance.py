@@ -24,7 +24,7 @@ def get_models(horizon):
                 ),
                 horizon=horizon,
             )
-            for alpha in [0.1, 1, 10, 100]
+            for alpha in [0.01, 0.1, 1, 10, 100]
         },
         **{
             f"lasso_poly_{alpha}": model_class(
@@ -36,7 +36,7 @@ def get_models(horizon):
                 ),
                 horizon=horizon,
             )
-            for alpha in [0.1, 1, 10]
+            for alpha in [0.01, 0.1, 1, 10]
         },
     }
 

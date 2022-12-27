@@ -5,7 +5,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso, Ridge
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
@@ -31,7 +31,16 @@ def get_models(position, horizon):
                 ),
                 horizon=horizon,
             )
-            for alpha in [0.1, 1, 10, 100]
+            for alpha in [0.01, 0.1, 1, 10, 100]
+        },
+        **{
+            f"ridge_{alpha}": model_class(
+                model=make_pipeline(
+                    SimpleImputer(), StandardScaler(), Ridge(alpha=alpha)
+                ),
+                horizon=horizon,
+            )
+            for alpha in [0.01, 0.1, 1, 10, 100]
         },
     }
 
@@ -120,7 +129,7 @@ class PointsModel:
                 .fillna(False)
                 .astype("Int32")
                 .astype(float),
-                utils.generate_targets(df, self.horizon, ["total_difficulty"]),
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
                 utils.generate_rolling_features(
                     df,
                     ["minutes", "xP"],
@@ -147,7 +156,7 @@ class GKModel(PointsModel):
                 .fillna(False)
                 .astype("Int32")
                 .astype(float),
-                utils.generate_targets(df, self.horizon, ["total_difficulty"]),
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),
