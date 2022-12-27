@@ -137,7 +137,7 @@ def get_player_data(seasons):
                 "elo",
                 "opponent_elo",
                 "win_prob",
-                "elo_diff"
+                "elo_diff",
             ]
         ],
         left_on=["season", "fixture", "team"],
@@ -154,7 +154,16 @@ def get_player_data(seasons):
     future_players = pd.concat(
         players.assign(GW=i).merge(
             fixture_df.query(f"season=='{seasons[-1]}'")[
-                ["season", "id", "team", "total_difficulty", "event", "was_home", "elo_diff", "win_prob"]
+                [
+                    "season",
+                    "id",
+                    "team",
+                    "total_difficulty",
+                    "event",
+                    "was_home",
+                    "elo_diff",
+                    "win_prob",
+                ]
             ],
             left_on=["team", "GW"],
             right_on=["team", "event"],
@@ -169,6 +178,7 @@ def get_player_data(seasons):
 
 def calculate_elo(fixtures):
     HOME_ADVANTAGE = 50
+
     def expect_result(p1, p2):
         exp = (p2 - p1) / 400.0
         home_win = 1 / ((10.0 ** (exp)) + 1)
@@ -212,10 +222,13 @@ def calculate_elo(fixtures):
             dict(
                 team_h_elo=ratings[row["team_h"]],
                 team_a_elo=ratings[row["team_a"]],
-                home_win_prob=expect_result(ratings[row["team_h"]] + HOME_ADVANTAGE, ratings[row["team_a"]])[0],
+                home_win_prob=expect_result(
+                    ratings[row["team_h"]] + HOME_ADVANTAGE, ratings[row["team_a"]]
+                )[0],
             )
         )
-        if row[["team_h_score", "team_a_score"]].isnull().any(): continue
+        if row[["team_h_score", "team_a_score"]].isnull().any():
+            continue
         home_update, away_update = update(
             ratings,
             row["team_h"],
