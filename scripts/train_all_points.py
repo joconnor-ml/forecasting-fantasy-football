@@ -28,7 +28,7 @@ def main(max_horizon, output_path, scores_path, features_path, imps_path):
     pd.concat(all_preds).to_parquet(output_path)
     pd.concat(all_scores).to_parquet(scores_path)
     pd.concat(all_features).to_parquet(features_path)
-    pd.concat(all_features).to_parquet(imps_path)
+    pd.concat(all_imps).to_parquet(imps_path)
 
 
 if __name__ == "__main__":
