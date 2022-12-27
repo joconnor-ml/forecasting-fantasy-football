@@ -123,13 +123,14 @@ class PointsModel:
                 utils.generate_targets(df, self.horizon, ["total_difficulty"]),
                 utils.generate_rolling_features(
                     df,
-                    ["minutes", "total_points", "xP"],
+                    ["minutes", "xP"],
                     aggs=("mean",),
                 ),
-                utils.generate_lag_features(
-                    df, ["minutes", "total_points"], lags=(0, 1, 2)
-                ),
-                utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
+                utils.generate_lag_features(df, ["minutes", "xP"], lags=(0,)),
+                (
+                    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
+                    + np.random.uniform(0, 1)
+                ).clip(1, 6),
             ],
             axis=1,
         )
@@ -148,7 +149,7 @@ class GKModel(PointsModel):
                 .astype(float),
                 utils.generate_targets(df, self.horizon, ["total_difficulty"]),
                 utils.generate_rolling_features(
-                    df, ["saves", "minutes"], windows=(4, 19), aggs=("mean",)
+                    df, ["saves", "minutes"], aggs=("mean",)
                 ),
                 utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
             ],
