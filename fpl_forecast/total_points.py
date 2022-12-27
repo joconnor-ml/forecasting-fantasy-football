@@ -11,7 +11,7 @@ from sklearn.metrics import (
     mean_absolute_error,
 )
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.preprocessing import StandardScaler
 
 from . import utils
 
@@ -33,22 +33,12 @@ def get_models(position, horizon):
             )
             for alpha in [0.1, 1, 10, 100]
         },
-        **{
-            f"lasso_poly_{alpha}": model_class(
-                model=make_pipeline(
-                    SimpleImputer(),
-                    PolynomialFeatures(),
-                    StandardScaler(),
-                    Lasso(alpha=alpha),
-                ),
-                horizon=horizon,
-            )
-            for alpha in [0.1, 1, 10]
-        },
     }
 
 
 class PointsModel:
+    feature_names = None
+
     def __init__(self, model, horizon):
         self.model = model
         self.horizon = horizon
@@ -108,6 +98,7 @@ class PointsModel:
         return np.clip(targets, 0, np.inf) ** 0.66
 
     def train(self, train_features, train_targets, **fit_kwargs):
+        self.feature_names = train_features.columns
         self.model = self.model.fit(
             train_features, self.transform(train_targets), **fit_kwargs
         )
@@ -142,6 +133,9 @@ class PointsModel:
             ],
             axis=1,
         )
+
+    def get_feature_importances(self):
+        return pd.Series(self.model.steps[-1][-1].coef_, index=self.feature_names)
 
 
 class GKModel(PointsModel):
