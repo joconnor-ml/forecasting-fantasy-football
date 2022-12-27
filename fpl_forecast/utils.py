@@ -55,7 +55,7 @@ def generate_lag_features(df, cols, lags=(0, 1, 2)):
     return pd.concat(feats, axis=1)
 
 
-def generate_rolling_features(df, cols, windows=(3, 10, 19), aggs=("mean", "median")):
+def generate_rolling_features(df, cols, windows=(3, 19), aggs=("mean", "median")):
     feats = (
         df.groupby(PLAYER_ID_COL)[cols]
         .ewm(halflife=window)
@@ -146,6 +146,7 @@ def get_player_data(seasons):
         )
         for i in range(int(next_gw), int(fixture_df.event.max()))
     )
+    df["xP"] = df["xP"].fillna(df["total_points"])
     df = pd.concat([df, future_players.assign(minutes=90)]).reset_index()
 
     return df
