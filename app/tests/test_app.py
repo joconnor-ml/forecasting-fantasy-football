@@ -19,6 +19,6 @@ class TestApp:
 
     def test_get_forecast_data(self):
         df = get_forecast_data(
-            TEST_DATA_DIR / "points.pq", TEST_DATA_DIR / "playing.pq"
+            TEST_DATA_DIR / "points.pq", TEST_DATA_DIR / "playing.pq", TEST_DATA_DIR / "features.pq"
         )
         assert not df.empty
