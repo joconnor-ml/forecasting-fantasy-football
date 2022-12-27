@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     playing_data_path: str = "prod/playing.pq"
     points_models_data: str = "prod/points_scores.pq"
     playing_models_data: str = "prod/playing_scores.pq"
+    feature_imps_path: str = "prod/feature_importances.pq"
     forecast_horizon: int = 5
 
     class Config:

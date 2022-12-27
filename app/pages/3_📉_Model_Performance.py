@@ -27,6 +27,10 @@ def get_model_scores(points_models_data, playing_models_data, bucket_name):
     return scores_by_model_type, points_scores, playing_scores
 
 
+def get_feature_importances(feature_imps_path, bucket_name):
+    return utils.read_parquet_cached(feature_imps_path, bucket_name)
+
+
 def main():
     utils.setup_page("Model Performance", icon="📉")
     best_scores, points_scores, playing_scores = get_model_scores(
@@ -53,11 +57,14 @@ def main():
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("### All Models: Playing Chance")
-    st.dataframe(playing_scores)
+    st.dataframe(playing_scores, use_container_width=True)
 
     st.markdown("### All Models: Gameweek Points")
-    st.dataframe(points_scores)
+    st.dataframe(points_scores, use_container_width=True)
 
+    st.markdown("### Feature importances: Gameweek Points")
+    feature_importance = get_feature_importances(settings.feature_imps_path, settings.bucket_name)
+    st.dataframe(feature_importance, use_container_width=True)
 
 if __name__ == "__main__":
     main()

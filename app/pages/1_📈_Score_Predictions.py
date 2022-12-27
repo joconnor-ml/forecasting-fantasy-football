@@ -27,7 +27,7 @@ def main():
             hover_data=["name", "score_if_playing", "playing_chance"],
         )
         st.plotly_chart(fig, use_container_width=True)
-
+        st.dataframe(df.loc[players], use_container_width=True)
 
 if __name__ == "__main__":
     main()
