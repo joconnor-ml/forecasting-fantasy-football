@@ -1,4 +1,4 @@
 methodtools==0.4.5
 pandas==1.3.5
 PuLP==2.6.0
-setuptools==65.5.0
+setuptools==65.5.1
