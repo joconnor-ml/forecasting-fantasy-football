@@ -70,18 +70,18 @@ class PointsModel:
 
     def inference_filter(self, df, targets):
         # TODO automate getting the inference week
-        return (df["season"] == utils.SEASONS[-1]) & (
+        return (df["season"] == utils.TRAIN_SEASONS[-1]) & (
             df["GW"]
-            == df[(df["season"] == utils.SEASONS[-1]) & df["total_points"].notnull()][
-                "GW"
-            ].max()
+            == df[
+                (df["season"] == utils.TRAIN_SEASONS[-1]) & df["total_points"].notnull()
+            ]["GW"].max()
         )
 
     def train_test_split(self, df, features, targets):
         # predicting scores conditioned on player appearing
-        train_filter = df["season"].isin(utils.SEASONS[:-2])
-        val_filter = df["season"].isin(utils.SEASONS[-2:])
-        top_val_filter = df["season"].isin(utils.SEASONS[-2:]) & (
+        train_filter = df["season"].isin(utils.TRAIN_SEASONS[:-2])
+        val_filter = df["season"].isin(utils.TRAIN_SEASONS[-2:])
+        top_val_filter = df["season"].isin(utils.TRAIN_SEASONS[-2:]) & (
             df["selected_by_percent"] > 10
         )
 
@@ -129,7 +129,9 @@ class PointsModel:
                 .fillna(False)
                 .astype("Int32")
                 .astype(float),
-                utils.generate_targets(df, self.horizon, ["win_prob"]),
+                utils.generate_targets(
+                    df, self.horizon, ["win_prob", "elo_diff", "total_difficulty"]
+                ),
                 utils.generate_rolling_features(
                     df,
                     ["minutes", "xP"],
@@ -156,7 +158,9 @@ class GKModel(PointsModel):
                 .fillna(False)
                 .astype("Int32")
                 .astype(float),
-                utils.generate_targets(df, self.horizon, ["win_prob"]),
+                utils.generate_targets(
+                    df, self.horizon, ["win_prob", "elo_diff", "total_difficulty"]
+                ),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),

@@ -6,16 +6,16 @@ from fpl_forecast import utils as forecast_utils
 
 
 def main(position: str, horizon: int):
-    df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
+    df = forecast_utils.get_player_data(seasons=forecast_utils.TRAIN_SEASONS)
     df = df[
         ((df["position"] == position) & (df["minutes"] > 0))
         | (
-            (df["season"] == forecast_utils.SEASONS[-1])
+            (df["season"] == forecast_utils.TRAIN_SEASONS[-1])
             & (df["position"] == position)
             & (
                 df["GW"]
                 == df[
-                    (df["season"] == forecast_utils.SEASONS[-1])
+                    (df["season"] == forecast_utils.TRAIN_SEASONS[-1])
                     & df["total_points"].notnull()
                 ]["GW"].max()
             )

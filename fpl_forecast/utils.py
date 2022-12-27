@@ -4,7 +4,8 @@ import pandas as pd
 from loguru import logger
 
 PLAYER_ID_COL = "code"
-SEASONS = ["2019-20", "2020-21", "2021-22", "2022-23"]
+TRAIN_SEASONS = ["2019-20", "2020-21", "2021-22", "2022-23"]
+ALL_SEASONS = ["2018-19"] + TRAIN_SEASONS
 GW_COLS = [
     "name",
     "position",
@@ -124,7 +125,7 @@ def get_player_data(seasons):
         "value"
     ].transform("size")
 
-    fixture_df = get_fixture_df(seasons)
+    fixture_df = get_fixture_df(ALL_SEASONS)  # add extra seasons to improve elo
     df = df.merge(
         fixture_df[
             [
@@ -212,7 +213,7 @@ def calculate_elo(fixtures):
             row["team_h_score"],
             row["team_a_score"],
             home_advantage=100,
-            k=40,
+            k=100,
         )
         output.append(
             dict(

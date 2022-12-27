@@ -9,7 +9,7 @@ from fpl_forecast import utils as forecast_utils
 
 
 def main(horizon: int):
-    df = forecast_utils.get_player_data(seasons=forecast_utils.SEASONS)
+    df = forecast_utils.get_player_data(seasons=forecast_utils.TRAIN_SEASONS)
 
     all_scores = []
     for model_name, model in playing_chance.get_models(horizon).items():
