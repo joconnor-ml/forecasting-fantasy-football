@@ -120,7 +120,7 @@ class PointsModel:
                 .fillna(False)
                 .astype("Int32")
                 .astype(float),
-                utils.generate_targets(df, self.horizon, ["total_difficulty"]),
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
                 utils.generate_rolling_features(
                     df,
                     ["minutes", "xP"],
@@ -147,7 +147,7 @@ class GKModel(PointsModel):
                 .fillna(False)
                 .astype("Int32")
                 .astype(float),
-                utils.generate_targets(df, self.horizon, ["total_difficulty"]),
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),
