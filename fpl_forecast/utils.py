@@ -154,7 +154,7 @@ def get_player_data(seasons):
     future_players = pd.concat(
         players.assign(GW=i).merge(
             fixture_df.query(f"season=='{seasons[-1]}'")[
-                ["season", "id", "team", "total_difficulty", "event", "was_home"]
+                ["season", "id", "team", "total_difficulty", "event", "was_home", "elo_diff", "win_prob"]
             ],
             left_on=["team", "GW"],
             right_on=["team", "event"],
@@ -168,6 +168,7 @@ def get_player_data(seasons):
 
 
 def calculate_elo(fixtures):
+    HOME_ADVANTAGE = 50
     def expect_result(p1, p2):
         exp = (p2 - p1) / 400.0
         home_win = 1 / ((10.0 ** (exp)) + 1)
@@ -200,28 +201,32 @@ def calculate_elo(fixtures):
         )
         home_result, away_result = get_result(home_score, away_score)
         score_weight = get_score_weight(home_score, away_score)
-        ratings[home] = ratings[home] + k * score_weight * (home_result - pred_home_win)
-        ratings[away] = ratings[away] + k * score_weight * (home_result - pred_home_win)
+        home_update = k * score_weight * (home_result - pred_home_win)
+        away_update = k * score_weight * (away_result - pred_away_win)
+        return home_update, away_update
 
     ratings = defaultdict(lambda: 1300.0)  # dict of {team: rating}
     output = []
     for i, row in fixtures.iterrows():
-        update(
+        output.append(
+            dict(
+                team_h_elo=ratings[row["team_h"]],
+                team_a_elo=ratings[row["team_a"]],
+                home_win_prob=expect_result(ratings[row["team_h"]] + HOME_ADVANTAGE, ratings[row["team_a"]])[0],
+            )
+        )
+        if row[["team_h_score", "team_a_score"]].isnull().any(): continue
+        home_update, away_update = update(
             ratings,
             row["team_h"],
             row["team_a"],
             row["team_h_score"],
             row["team_a_score"],
-            home_advantage=100,
-            k=100,
+            home_advantage=HOME_ADVANTAGE,
+            k=40,
         )
-        output.append(
-            dict(
-                team_h_elo=ratings["team_h"],
-                team_a_elo=ratings["team_a"],
-                home_win_prob=expect_result(ratings["team_h"], ratings["team_a"])[0],
-            )
-        )
+        ratings[row["team_h"]] += home_update
+        ratings[row["team_a"]] += away_update
     return pd.DataFrame(output, index=fixtures.index)
 
 
