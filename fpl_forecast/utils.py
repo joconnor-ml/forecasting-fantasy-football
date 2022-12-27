@@ -137,13 +137,13 @@ def get_player_data(seasons):
                 "elo",
                 "opponent_elo",
                 "win_prob",
+                "elo_diff"
             ]
         ],
         left_on=["season", "fixture", "team"],
         right_on=["season", "id", "team"],
         how="left",
     )
-    df["elo_diff"] = df["elo"] - df["opponent_elo"]
 
     # extend current season into future using fixture df
     this_season = df.query(f"season=='{seasons[-1]}'")
@@ -290,4 +290,5 @@ def get_fixture_df(seasons):
     fixtures["total_difficulty"] = (
         fixtures["opponent_difficulty"] - fixtures["difficulty"]
     )
+    fixtures["elo_diff"] = fixtures["elo"] - fixtures["opponent_elo"]
     return fixtures
