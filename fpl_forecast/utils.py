@@ -273,19 +273,19 @@ def get_fixture_df(seasons):
             f"https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data/{season}/teams.csv"
         )
         season_fixtures = season_fixtures.merge(
-            season_teams[["code", "id"]],
+            season_teams[["code", "id", "name"]],
             left_on="team_h",
             right_on="id",
             suffixes=("", "home_team_"),
-        )
-        season_fixtures = season_fixtures.merge(
-            season_teams[["code", "id"]],
+        ).merge(
+            season_teams[["code", "id", "name"]],
             left_on="team_a",
             right_on="id",
             suffixes=("", "away_team_"),
         )
         fixtures.append(season_fixtures)
     fixtures = pd.concat(fixtures)
+    print(fixtures.head())
     fixtures = pd.concat([fixtures, calculate_elo(fixtures)], axis=1)
     fixtures = pd.concat(
         [
