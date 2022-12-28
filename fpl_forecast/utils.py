@@ -5,7 +5,7 @@ from loguru import logger
 
 PLAYER_ID_COL = "code"
 TRAIN_SEASONS = ["2019-20", "2020-21", "2021-22", "2022-23"]
-ALL_SEASONS = ["2018-19"] + TRAIN_SEASONS
+ALL_SEASONS = TRAIN_SEASONS
 GW_COLS = [
     "name",
     "position",
