@@ -220,10 +220,10 @@ def calculate_elo(fixtures):
     for i, row in fixtures.iterrows():
         output.append(
             dict(
-                team_h_elo=ratings[row["team_h"]],
-                team_a_elo=ratings[row["team_a"]],
+                team_h_elo=ratings[row["home_team_code"]],
+                team_a_elo=ratings[row["away_team_code"]],
                 home_win_prob=expect_result(
-                    ratings[row["team_h"]] + HOME_ADVANTAGE, ratings[row["team_a"]]
+                    ratings[row["home_team_code"]] + HOME_ADVANTAGE, ratings[row["away_team_code"]]
                 )[0],
             )
         )
@@ -231,15 +231,15 @@ def calculate_elo(fixtures):
             continue
         home_update, away_update = update(
             ratings,
-            row["team_h"],
-            row["team_a"],
+            row["home_team_code"],
+            row["away_team_code"],
             row["team_h_score"],
             row["team_a_score"],
             home_advantage=HOME_ADVANTAGE,
             k=40,
         )
-        ratings[row["team_h"]] += home_update
-        ratings[row["team_a"]] += away_update
+        ratings[row["home_team_code"]] += home_update
+        ratings[row["away_team_code"]] += away_update
     return pd.DataFrame(output, index=fixtures.index)
 
 
@@ -263,23 +263,32 @@ def get_score_distributions():
 
 
 def get_fixture_df(seasons):
-    fixtures = pd.concat(
-        pd.read_csv(
-            f"https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data/{season}/fixtures.csv"
-        ).assign(season=season)
-        for season in seasons
-    )
+    fixtures=[]
+    for season in seasons:
+        season_fixtures = pd.read_csv(
+                f"https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data/{season}/fixtures.csv"
+            ).assign(season=season)
+        season_teams = pd.read_csv(
+                    f"https://raw.githubusercontent.com/vaastav/Fantasy-Premier-League/master/data/{season}/teams.csv"
+                )
+        season_fixtures = season_fixtures.merge(season_teams[["code", "id"]], left_on="team_h", right_on="id", suffixes=("", "home_team_"))
+        season_fixtures = season_fixtures.merge(season_teams[["code", "id"]], left_on="team_a", right_on="id",
+                                                suffixes=("", "away_team_"))
+        fixtures.append(season_fixtures)
+    fixtures=pd.DataFrame(fixtures)
     fixtures = pd.concat([fixtures, calculate_elo(fixtures)], axis=1)
     fixtures = pd.concat(
         [
             fixtures.rename(
                 columns={
                     "team_h": "team",
+                    "home_team_name": "team_name",
                     "team_h_difficulty": "difficulty",
                     "team_h_score": "score",
                     "team_h_elo": "elo",
                     "home_win_prob": "win_prob",
                     "team_a": "opponent",
+                    "away_team_name": "opponent_name",
                     "team_a_difficulty": "opponent_difficulty",
                     "team_a_score": "opponent_score",
                     "team_a_elo": "opponent_elo",
@@ -288,10 +297,12 @@ def get_fixture_df(seasons):
             fixtures.rename(
                 columns={
                     "team_a": "team",
+                    "away_team_name": "team_name",
                     "team_a_difficulty": "difficulty",
                     "team_a_score": "score",
                     "team_a_elo": "elo",
                     "team_h": "opponent",
+                    "home_team_name": "opponent_name",
                     "team_h_difficulty": "opponent_difficulty",
                     "team_h_score": "opponent_score",
                     "team_h_elo": "opponent_elo",
