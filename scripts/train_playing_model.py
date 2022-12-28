@@ -77,7 +77,8 @@ def main(horizon: int):
             "element",
         ],
     ]
-    out_df["playing_chance"] = best_model.predict(test_features)
+    preds = best_model.predict(test_features)
+    out_df["playing_chance"] = 1 - preds[:, 0]
     return out_df, all_scores
 
 

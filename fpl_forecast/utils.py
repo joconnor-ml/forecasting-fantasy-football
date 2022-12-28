@@ -114,7 +114,7 @@ def get_player_data(seasons):
         .reset_index(drop=True)
     )
 
-    df["played"] = (df["minutes"] > 0).astype(int)
+    df["played"] = (df["minutes"] > 0).astype(int) + (df["minutes"] >= 60).astype(int)
     df["position"] = df["position"].replace({"GKP": "GK"})
     df = df.join(pd.get_dummies(df["position"]))
 

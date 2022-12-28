@@ -102,7 +102,7 @@ class PlayingChanceModel:
         return self
 
     def predict(self, test_features):
-        return self.model.predict_proba(test_features)[:, -1]
+        return self.model.predict_proba(test_features)
 
     def get_scores(self, targets, preds):
         return {
