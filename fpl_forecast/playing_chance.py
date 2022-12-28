@@ -2,10 +2,11 @@ import json
 import pathlib
 
 import joblib
+import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import log_loss, accuracy_score, roc_auc_score
+from sklearn.metrics import log_loss, accuracy_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 
@@ -102,13 +103,13 @@ class PlayingChanceModel:
         return self
 
     def predict(self, test_features):
-        return self.model.predict_proba(test_features)[:, -1]
+        return self.model.predict_proba(test_features)
 
     def get_scores(self, targets, preds):
         return {
-            "log_loss": log_loss(targets, preds),
-            "roc_auc": roc_auc_score(targets, preds),
-            "accuracy": accuracy_score(targets, preds > 0.5),
+            "log_loss": log_loss(targets, preds, labels=[0, 1, 2]),
+            # "roc_auc": roc_auc_score(targets, preds),
+            "accuracy": accuracy_score(targets, np.argmax(preds, axis=1)),
         }
 
     def generate_features(self, df):

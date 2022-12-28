@@ -1,7 +1,6 @@
 import argparse
 import pathlib
 
-import numpy as np
 import pandas as pd
 
 from fpl_forecast import playing_chance
@@ -29,8 +28,6 @@ def main(horizon: int):
         )
 
         ## benchmark:
-        benchmark_pred = np.ones_like(val_targets) * val_targets.mean()
-        benchmark_scores = model.get_scores(val_targets, benchmark_pred)
         model = model.train(train_features, train_targets)
         preds = model.predict(val_features)
         top_preds = model.predict(top_val_features)
@@ -77,7 +74,8 @@ def main(horizon: int):
             "element",
         ],
     ]
-    out_df["playing_chance"] = best_model.predict(test_features)
+    preds = best_model.predict(test_features)
+    out_df["playing_chance"] = 1 - preds[:, 0]
     return out_df, all_scores
 
 
