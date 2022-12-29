@@ -48,10 +48,7 @@ def read_parquet_cached(path, bucket_name=None):
 @st.cache
 def get_forecast_data(points_path, playing_path, features_path, bucket_name=None):
     top_features = [
-        "total_difficulty",
-        "elo_diff",
         "win_prob",
-        "value_rank_lag_0",
         "xP_rolling_19_mean",
         "xP_rolling_3_mean",
     ]
