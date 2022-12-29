@@ -85,6 +85,9 @@ class PointsModel:
             df["selected_by_percent"] > 10
         )
 
+        train_df = df[train_filter]
+        val_df = df[val_filter]
+        top_val_df = df[top_val_filter]
         train_features = features[train_filter]
         val_features = features[val_filter]
         top_val_features = features[top_val_filter]
@@ -92,6 +95,9 @@ class PointsModel:
         val_targets = targets[val_filter][TARGET_COL]
         top_val_targets = targets[top_val_filter][TARGET_COL]
         return (
+            train_df,
+            val_df,
+            top_val_df,
             train_features,
             val_features,
             top_val_features,
@@ -106,10 +112,15 @@ class PointsModel:
     def inverse(self, targets):
         return np.clip(targets, 0, np.inf) ** 0.66
 
-    def train(self, train_features, train_targets, **fit_kwargs):
+    def train(self, train_features, train_targets, weights=None, **fit_kwargs):
+        if weights is not None:
+            model_name = self.model.steps[-1][0]
+            model_args = {f"{model_name}__sample_weight": weights}
+        else:
+            model_args = {}
         self.feature_names = train_features.columns
         self.model = self.model.fit(
-            train_features, self.transform(train_targets), **fit_kwargs
+            train_features, self.transform(train_targets), **model_args, **fit_kwargs
         )
         return self
 
@@ -125,23 +136,18 @@ class PointsModel:
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"])
-                .fillna(False)
-                .astype("Int32")
-                .astype(float),
-                utils.generate_targets(
-                    df, self.horizon, ["win_prob", "elo_diff", "total_difficulty"]
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
+                self.transform(
+                    utils.generate_rolling_features(
+                        df,
+                        ["xP"],
+                        aggs=("mean",),
+                    )
                 ),
-                utils.generate_rolling_features(
-                    df,
-                    ["minutes", "xP"],
-                    aggs=("mean",),
-                ),
-                utils.generate_lag_features(df, ["minutes", "xP"], lags=(0,)),
-                (
-                    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
-                    + np.random.uniform(0, 1)
-                ).clip(1, 3),
+                # (
+                #    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
+                #    + np.random.uniform(0, 1)
+                # ).clip(1, 3),
             ],
             axis=1,
         )
@@ -154,17 +160,11 @@ class GKModel(PointsModel):
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"])
-                .fillna(False)
-                .astype("Int32")
-                .astype(float),
-                utils.generate_targets(
-                    df, self.horizon, ["win_prob", "elo_diff", "total_difficulty"]
-                ),
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),
-                utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
+                # utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
             ],
             axis=1,
         )
