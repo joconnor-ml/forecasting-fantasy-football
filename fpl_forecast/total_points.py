@@ -107,11 +107,12 @@ class PointsModel:
         return np.clip(targets, 0, np.inf) ** 0.66
 
     def train(self, train_features, train_targets, weights, **fit_kwargs):
-        model_name = self.model.steps[-1][-1].__name__
-        model_args = {f"{model_name}__sample_weight": weights}
         self.feature_names = train_features.columns
         self.model = self.model.fit(
-            train_features, self.transform(train_targets), **model_args, **fit_kwargs
+            train_features,
+            self.transform(train_targets),
+            model__sample_weight=weights,
+            **fit_kwargs,
         )
         return self
 
@@ -127,18 +128,18 @@ class PointsModel:
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(
-                    df, self.horizon, ["win_prob"]
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
+                self.transform(
+                    utils.generate_rolling_features(
+                        df,
+                        ["xP"],
+                        aggs=("mean",),
+                    )
                 ),
-                self.transform(utils.generate_rolling_features(
-                    df,
-                    ["xP"],
-                    aggs=("mean",),
-                )),
-                #(
+                # (
                 #    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
                 #    + np.random.uniform(0, 1)
-                #).clip(1, 3),
+                # ).clip(1, 3),
             ],
             axis=1,
         )
@@ -151,13 +152,11 @@ class GKModel(PointsModel):
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(
-                    df, self.horizon, ["win_prob"]
-                ),
+                utils.generate_targets(df, self.horizon, ["win_prob"]),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),
-                #utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
+                # utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
             ],
             axis=1,
         )
