@@ -112,9 +112,12 @@ class PointsModel:
     def inverse(self, targets):
         return np.clip(targets, 0, np.inf) ** 0.66
 
-    def train(self, train_features, train_targets, weights, **fit_kwargs):
-        model_name = self.model.steps[-1][0]
-        model_args = {f"{model_name}__sample_weight": weights}
+    def train(self, train_features, train_targets, weights=None, **fit_kwargs):
+        if weights is not None:
+            model_name = self.model.steps[-1][0]
+            model_args = {f"{model_name}__sample_weight": weights}
+        else:
+            model_args = {}
         self.feature_names = train_features.columns
         self.model = self.model.fit(
             train_features, self.transform(train_targets), **model_args, **fit_kwargs

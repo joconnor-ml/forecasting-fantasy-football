@@ -48,7 +48,6 @@ def main(position: str, horizon: int):
         model = model.train(
             train_features,
             train_targets,
-            weights=np.log(train_df["selected_by_percent"] + 1),
         )
         preds = model.predict(val_features)
         top_preds = model.predict(top_val_features)
@@ -81,7 +80,6 @@ def main(position: str, horizon: int):
     best_model = best_model.train(
         pd.concat([train_features, val_features]),
         pd.concat([train_targets, val_targets]),
-        np.log(pd.concat([train_df, val_df])["selected_by_percent"] + 1),
     )
 
     inference_filter = best_model.inference_filter(df, targets)
