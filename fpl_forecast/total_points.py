@@ -107,12 +107,11 @@ class PointsModel:
         return np.clip(targets, 0, np.inf) ** 0.66
 
     def train(self, train_features, train_targets, weights, **fit_kwargs):
+        model_name = self.model.steps[-1][0]
+        model_args = {f"{model_name}__sample_weight": weights}
         self.feature_names = train_features.columns
         self.model = self.model.fit(
-            train_features,
-            self.transform(train_targets),
-            model__sample_weight=weights,
-            **fit_kwargs,
+            train_features, self.transform(train_targets), **model_args, **fit_kwargs
         )
         return self
 
