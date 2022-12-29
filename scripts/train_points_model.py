@@ -29,6 +29,9 @@ def main(position: str, horizon: int):
         train_filter = model.train_filter(df, targets)
 
         (
+            train_df,
+            val_df,
+            top_val_df,
             train_features,
             val_features,
             top_val_features,
@@ -45,7 +48,7 @@ def main(position: str, horizon: int):
         model = model.train(
             train_features,
             train_targets,
-            weights=df[train_filter]["selected_by_percent"] ** 0.5,
+            weights=train_df["selected_by_percent"] ** 0.5,
         )
         preds = model.predict(val_features)
         top_preds = model.predict(top_val_features)
@@ -62,6 +65,9 @@ def main(position: str, horizon: int):
     train_filter = best_model.train_filter(df, targets)
 
     (
+        train_df,
+        val_df,
+        top_val_df,
         train_features,
         val_features,
         top_val_features,

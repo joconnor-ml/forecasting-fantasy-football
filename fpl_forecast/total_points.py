@@ -85,6 +85,9 @@ class PointsModel:
             df["selected_by_percent"] > 10
         )
 
+        train_df = df[train_filter]
+        val_df = df[val_filter]
+        top_val_df = df[top_val_filter]
         train_features = features[train_filter]
         val_features = features[val_filter]
         top_val_features = features[top_val_filter]
@@ -92,6 +95,9 @@ class PointsModel:
         val_targets = targets[val_filter][TARGET_COL]
         top_val_targets = targets[top_val_filter][TARGET_COL]
         return (
+            train_df,
+            val_df,
+            top_val_df,
             train_features,
             val_features,
             top_val_features,
