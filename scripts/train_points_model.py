@@ -81,6 +81,7 @@ def main(position: str, horizon: int):
     best_model = best_model.train(
         pd.concat([train_features, val_features]),
         pd.concat([train_targets, val_targets]),
+        pd.concat([train_df, val_df])["selected_by_percent"] ** 0.5,
     )
 
     inference_filter = best_model.inference_filter(df, targets)
