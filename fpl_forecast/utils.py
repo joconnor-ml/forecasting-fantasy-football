@@ -220,11 +220,11 @@ def calculate_elo(fixtures):
     for i, row in fixtures.iterrows():
         output.append(
             dict(
-                team_h_elo=ratings[row["home_team_code"]],
-                team_a_elo=ratings[row["away_team_code"]],
+                team_h_elo=ratings[row["code_home"]],
+                team_a_elo=ratings[row["code_away"]],
                 home_win_prob=expect_result(
-                    ratings[row["home_team_code"]] + HOME_ADVANTAGE,
-                    ratings[row["away_team_code"]],
+                    ratings[row["code_home"]] + HOME_ADVANTAGE,
+                    ratings[row["code_away"]],
                 )[0],
             )
         )
@@ -232,15 +232,15 @@ def calculate_elo(fixtures):
             continue
         home_update, away_update = update(
             ratings,
-            row["home_team_code"],
-            row["away_team_code"],
+            row["code_home"],
+            row["code_away"],
             row["team_h_score"],
             row["team_a_score"],
             home_advantage=HOME_ADVANTAGE,
             k=40,
         )
-        ratings[row["home_team_code"]] += home_update
-        ratings[row["away_team_code"]] += away_update
+        ratings[row["code_home"]] += home_update
+        ratings[row["code_away"]] += away_update
     return pd.DataFrame(output, index=fixtures.index)
 
 
@@ -276,12 +276,12 @@ def get_fixture_df(seasons):
             season_teams[["code", "id", "name"]],
             left_on="team_h",
             right_on="id",
-            prefixes=("", "home_team_"),
+            suffixes=("", "_home"),
         ).merge(
             season_teams[["code", "id", "name"]],
             left_on="team_a",
             right_on="id",
-            prefixes=("", "away_team_"),
+            suffixes=("", "_away"),
         )
         fixtures.append(season_fixtures)
     fixtures = pd.concat(fixtures)
