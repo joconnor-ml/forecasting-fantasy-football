@@ -285,7 +285,6 @@ def get_fixture_df(seasons):
         )
         fixtures.append(season_fixtures)
     fixtures = pd.concat(fixtures)
-    print(fixtures.head())
     fixtures = pd.concat([fixtures, calculate_elo(fixtures)], axis=1)
     fixtures = pd.concat(
         [
