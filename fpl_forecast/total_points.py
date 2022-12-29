@@ -125,23 +125,18 @@ class PointsModel:
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"])
-                .fillna(False)
-                .astype("Int32")
-                .astype(float),
                 utils.generate_targets(
-                    df, self.horizon, ["win_prob", "elo_diff", "total_difficulty"]
+                    df, self.horizon, ["win_prob"]
                 ),
-                utils.generate_rolling_features(
+                self.transform(utils.generate_rolling_features(
                     df,
-                    ["minutes", "xP"],
+                    ["xP"],
                     aggs=("mean",),
-                ),
-                utils.generate_lag_features(df, ["minutes", "xP"], lags=(0,)),
-                (
-                    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
-                    + np.random.uniform(0, 1)
-                ).clip(1, 3),
+                )),
+                #(
+                #    utils.generate_lag_features(df, ["value_rank"], lags=(0,))
+                #    + np.random.uniform(0, 1)
+                #).clip(1, 3),
             ],
             axis=1,
         )
@@ -154,17 +149,13 @@ class GKModel(PointsModel):
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["was_home"])
-                .fillna(False)
-                .astype("Int32")
-                .astype(float),
                 utils.generate_targets(
-                    df, self.horizon, ["win_prob", "elo_diff", "total_difficulty"]
+                    df, self.horizon, ["win_prob"]
                 ),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),
-                utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
+                #utils.generate_lag_features(df, ["value_rank"], lags=(0,)),
             ],
             axis=1,
         )
