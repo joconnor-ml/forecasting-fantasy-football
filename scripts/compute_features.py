@@ -25,7 +25,7 @@ def main(position: str, horizon: int):
     for model_name, model in total_points.get_models(position, horizon).items():
         features = model.generate_features(df)
         targets = model.get_targets(df)
-        pd.concat([df, features, targets], axis=1).to_parquet(
+        pd.concat([features, targets], axis=1).to_parquet(
             f"prod/features/{position}_{horizon}.pq"
         )
         break
