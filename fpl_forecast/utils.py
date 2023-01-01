@@ -177,7 +177,7 @@ def get_player_data(seasons):
 
 
 def calculate_elo(fixtures):
-    HOME_ADVANTAGE = 50
+    HOME_ADVANTAGE = 10
 
     def expect_result(p1, p2):
         exp = (p2 - p1) / 400.0
@@ -285,6 +285,9 @@ def get_fixture_df(seasons):
         )
         fixtures.append(season_fixtures)
     fixtures = pd.concat(fixtures)
+    fixtures["kickoff_time"] = pd.to_datetime(fixtures["kickoff_time"])
+    fixtures = fixtures.sort_values("kickoff_time")
+
     fixtures = pd.concat([fixtures, calculate_elo(fixtures)], axis=1)
     fixtures = pd.concat(
         [
