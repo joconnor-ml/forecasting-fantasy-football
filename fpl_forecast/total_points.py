@@ -138,7 +138,7 @@ class PointsModel:
                 utils.generate_targets(df, self.horizon, ["win_prob"]),
                 self.transform(
                     utils.generate_rolling_features(
-                        df, ["xP"], aggs=("mean",), windows=(3,)
+                        df, ["xP"], aggs=("mean",), windows=(5,)
                     )
                 ),
                 self.transform(
