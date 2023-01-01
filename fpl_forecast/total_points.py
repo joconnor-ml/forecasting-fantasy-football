@@ -135,7 +135,7 @@ class PointsModel:
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["win_prob"]),
+                utils.generate_targets(df, self.horizon, ["elo_diff"]),
                 self.transform(
                     utils.generate_rolling_features(
                         df, ["xP"], aggs=("mean",), windows=(5,)
@@ -162,7 +162,7 @@ class GKModel(PointsModel):
     def generate_features(self, df):
         return pd.concat(
             [
-                utils.generate_targets(df, self.horizon, ["win_prob"]),
+                utils.generate_targets(df, self.horizon, ["elo_diff"]),
                 utils.generate_rolling_features(
                     df, ["saves", "minutes"], aggs=("mean",)
                 ),
