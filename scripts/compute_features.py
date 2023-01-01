@@ -22,21 +22,13 @@ def main(position: str, horizon: int):
     ]
 
     existing_features = []
-    features = pd.DataFrame()
     for model_name, model in total_points.get_models(position, horizon).items():
-        features = pd.concat(
-            [
-                features,
-                model.generate_features(df).drop(existing_features, axis=1),
-            ],
-            axis=1,
+        features = model.generate_features(df)
+        targets = model.get_targets(df)
+        pd.concat([df, features, targets], axis=1).to_parquet(
+            f"prod/features/{position}_{horizon}.pq"
         )
-        existing_features += list(features.columns)
-
-    targets = model.get_targets(df)
-    pd.concat([df, features, targets], axis=1).to_parquet(
-        f"prod/features/{position}_{horizon}.pq"
-    )
+        break
 
 
 if __name__ == "__main__":
