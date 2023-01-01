@@ -49,7 +49,7 @@ def read_parquet_cached(path, bucket_name=None):
 def get_forecast_data(points_path, playing_path, features_path, bucket_name=None):
     top_features = [
         "win_prob",
-        "xP_rolling_19_mean",
+        "total_points_rolling_19_mean",
         "xP_rolling_3_mean",
     ]
     features = read_parquet_cached(features_path, bucket_name)[top_features]

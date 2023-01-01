@@ -5,7 +5,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import Lasso, Ridge
+from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
@@ -31,16 +31,15 @@ def get_models(position, horizon):
                 ),
                 horizon=horizon,
             )
-            for alpha in [0.01, 0.1, 1, 10, 100]
+            for alpha in [0.001, 0.01, 0.1, 1]
         },
         **{
-            f"ridge_{alpha}": model_class(
+            "linear_regression": model_class(
                 model=make_pipeline(
-                    SimpleImputer(), StandardScaler(), Ridge(alpha=alpha)
+                    SimpleImputer(), StandardScaler(), LinearRegression()
                 ),
                 horizon=horizon,
             )
-            for alpha in [0.01, 0.1, 1, 10, 100]
         },
     }
 
@@ -139,9 +138,12 @@ class PointsModel:
                 utils.generate_targets(df, self.horizon, ["win_prob"]),
                 self.transform(
                     utils.generate_rolling_features(
-                        df,
-                        ["xP"],
-                        aggs=("mean",),
+                        df, ["xP"], aggs=("mean",), windows=(5,)
+                    )
+                ),
+                self.transform(
+                    utils.generate_rolling_features(
+                        df, ["total_points"], aggs=("mean",), windows=(19,)
                     )
                 ),
                 # (
