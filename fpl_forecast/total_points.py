@@ -141,6 +141,15 @@ class PointsModel:
                         df,
                         ["xP"],
                         aggs=("mean",),
+                        windows=(3,)
+                    )
+                ),
+                self.transform(
+                    utils.generate_rolling_features(
+                        df,
+                        ["total_points"],
+                        aggs=("mean",),
+                        windows=(19,)
                     )
                 ),
                 # (
