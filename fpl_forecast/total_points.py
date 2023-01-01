@@ -31,7 +31,7 @@ def get_models(position, horizon):
                 ),
                 horizon=horizon,
             )
-            for alpha in [0.001, 0.01, 0.1, 1]
+            for alpha in [0.001, 0.01, 0.1]
         },
         **{
             "linear_regression": model_class(
