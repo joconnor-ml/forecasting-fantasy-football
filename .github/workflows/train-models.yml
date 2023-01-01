@@ -36,7 +36,8 @@ jobs:
 
     - name: Train points models
       run: |
-        mkdir prod
+        mkdir prod prod/features
+        python -m scripts.compute_features
         python -m scripts.train_all_points --horizon 5 \
         --outfile prod/points.pq --score_path prod/points_scores.pq \
         --features_path=prod/points_features.pq --imps_path=prod/feature_importances.pq
