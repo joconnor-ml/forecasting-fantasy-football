@@ -1,3 +1,4 @@
+altair<5
 pyarrow==10.0.0
 fsspec==2022.11.0
 gcsfs==2022.11.0
