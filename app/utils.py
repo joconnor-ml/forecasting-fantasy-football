@@ -127,4 +127,8 @@ def get_club_data():
 
 def get_current_gameweek():
     gameweeks = get_gameweek_data()
-    return gameweeks[gameweeks["is_current"]].iloc[-1]["id"]
+    try:
+        current = gameweeks[gameweeks["is_current"]].iloc[-1]["id"]
+    except IndexError:  # catch gameweek 0
+        current = gameweeks[gameweeks["is_next"]].iloc[-1]["id"] - 1
+    return current
