@@ -1,5 +1,5 @@
 altair<5
-pyarrow==10.0.0
+pyarrow==14.0.1
 fsspec==2022.11.0
 gcsfs==2022.11.0
 numpy==1.24.0
